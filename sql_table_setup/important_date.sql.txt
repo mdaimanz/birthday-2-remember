@@ -1,0 +1,19 @@
+-- Table: public.important_date
+
+-- DROP TABLE public.important_date;
+
+CREATE TABLE public.important_date
+(
+    date date NOT NULL,
+    description character varying(500) COLLATE pg_catalog."default",
+    title character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    remind_time time without time zone NOT NULL,
+    remind_date date NOT NULL,
+    cust_id bigint,
+    remind_id bigint NOT NULL DEFAULT nextval('"important_date_remind-id_seq"'::regclass)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.important_date
+    OWNER to postgres;
