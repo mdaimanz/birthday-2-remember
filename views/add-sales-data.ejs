@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Sales</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            $(document).on('click', '.addmore', function (ev) {
+                var $clone = $(this).parent().parent().clone(true);
+                var $newbuttons = "<button type='button' class='mb-xs mr-xs btn btn-info addmore'>Add<i class='fa fa-plus'></i></button><button type='button' class='mb-xs mr-xs btn btn-info removemore'>Remove<i class='fa fa-remove'></i></button>";
+                $clone.find('.tn-buttons').html($newbuttons).end().appendTo($('#packagingappendhere'));
+            });
+
+            $(document).on('click', '.removemore', function () {
+                $(this).parent().parent().remove();
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Sales</h1>
+        <a href="/add_sales/sales">Back to Sales</a>
+        <a href="/users/logout">Logout</a>
+
+        <br>
+        <br>
+        <ul>
+            <% if(messages.success_msg) { %>
+            <li><%= messages.success_msg %></li>
+            <% } %>
+        </ul>
+        
+        <ul>
+            <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
+            <li><%= error.message %></li>
+            <% }) %> <% } %>
+        </ul>
+      
+        <form action="/add_sales/add-sales-data" method="POST">
+            <div>
+                <input type="date" id="date" name="date" placeholder="Date" required />
+            </div>
+                <div>
+                    <input
+                        type="number"
+                        id="modal"
+                        name="modal"
+                        placeholder="Modal"
+                        required
+                    />
+                </div>
+                <div class="row clonedata">
+                    <div>
+                        <input
+                            type="text"
+                            id="product"
+                            name="product"
+                            placeholder="Products"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <input
+                            type="number"
+                            id="price_per_product"
+                            name="price_per_product"
+                            placeholder="Price per Product"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <input
+                            type="number"
+                            id="quantity_sold"
+                            name="quantity_sold"
+                            placeholder="Quantity Sold"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <button type="button" class="mb-xs mr-xs btn btn-info addmore">Add<i class="fa fa-plus"></i></button>
+                        <button type="button" class="mb-xs mr-xs btn btn-info removemore">Remove<i class="fa fa-remove"></i></button>
+                    </div>
+                </div>
+        
+                <div id="packagingappendhere"></div>
+                <input type="submit" value="Submit" />
+            </div>
+        </form>
+    </body>
+</html>

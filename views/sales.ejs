@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Sales</title>
+  </head>
+  <body>
+    <h1>Sales</h1>
+
+    <a href="/users/dashboard">Back to Dashboard</a>
+
+    <a href="/users/logout">Logout</a>
+
+    <br>
+    <br>
+
+    <form action="/add_sales/add-sales-data">
+        <input type="submit" value="Add Sales Data" />
+    </form>
+
+    <form action="/sales_report/sales-report">
+        <input type="submit" value="Sales Report" />
+    </form>
+
+    <ul>
+        <% if(messages.success_msg) { %>
+        <li><%= messages.success_msg %></li>
+        <% } %>
+    </ul>
+
+   
+    <table>
+
+        <tr>
+            <th>Date</th>
+            <th>Modal</th>
+            <th>Product</th>
+            <th>Price per Product</th>
+            <th>Quantity Sold</th>
+            <th>Delete</th>
+            <th>Edit</th>
+        </tr>
+        
+        <% if (typeof sales != 'undefined') { %> <% sales.forEach(date => { %>
+            <tr>
+                <td><%= date.date.toDateString() %></td>
+                <td><%= date.modal %></td>
+                <td><%= date.product %></td>
+                <td><%= date.price_per_product %></td>
+                <td><%= date.quantity_sold %></td>
+                <td>
+                    <form action="/add_sales/delete-sale/<%= date.sales_id %>">
+                        <input type="submit" value="Delete" />
+                    </form>
+                </td>
+                <td>
+                    <form action="/add_sales/edit-sales/<%= date.sales_id %>">
+                        <input type="submit" value="Edit" />
+                    </form>
+                </td>
+            </tr>   
+        <% }) %> <% } %>
+       
+ </table>
+  </body>
+</html>

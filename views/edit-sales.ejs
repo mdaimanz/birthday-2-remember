@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Edit Sales</title>
+  </head>
+  <body>
+    <h1>Edit Sales</h1>
+
+    <a href="/add_sales/sales">Back to Sales</a>
+
+    <a href="/users/logout">Logout</a>
+
+    <br>
+    <br>
+
+    <ul>
+        <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
+        <li><%= error.message %></li>
+        <% }) %> <% } %>
+      </ul>
+        <% if (typeof sales != 'undefined') { %> <% sales.forEach(date => { %>
+    <form action="/add_sales/edit-sales/<%= date.sales_id%>" method="POST">
+        
+
+        <% var dd = String(date.date.getDate()).padStart(2,'0'); %>
+        <% var mm = String(date.date.getMonth()+1).padStart(2,'0'); %>
+        <% var yy = date.date.getFullYear(); %>
+        <% var day = yy + '-' + mm + '-' + dd; %>
+        
+
+        <div>
+          <input type="date" id="date" name="date" value="<%= day %>"  required />
+        </div>
+        <div>
+            <input
+            type="number"
+            id="modal"
+            name="modal"
+            value="<%= date.modal%>"
+            required
+        />
+        </div>
+        <div>
+          <input
+            type="text"
+            id="product"
+            name="product"
+            value="<%= date.product%>"
+            required
+          />
+        </div>
+        <div>
+          <input
+            type="number"
+            id="price_per_product"
+            name="price_per_product"
+            value="<%= date.price_per_product%>"
+            required
+          />
+        </div>
+
+        <div>
+            <input
+                type="number"
+                id="quantity_sold"
+                name="quantity_sold"
+                value="<%= date.quantity_sold%>"
+                required
+            />
+          </div>
+
+          <% }) %> <% } %>
+
+        <div>
+          <input type="submit" value="Submit" />
+        </div>
+  
+        
+      </form>
+  </body>
+</html>
