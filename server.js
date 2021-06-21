@@ -250,6 +250,169 @@ app.post(
   })
 );
 
+// Sales Module Start Here
+/*
+  This class is to render add-sales-data.ejs and show it in the browser
+*/
+app.get("/add_sales/add-sales-data", checkNotAuthenticated, (req, res) => {
+  console.log(req.isAuthenticated());
+  res.render("add-sales-data.ejs");
+});
+
+/*
+  This class render the add sales data page for vendor to insert sale data into the system
+*/
+app.post("/add_sales/add-sales-data", async (req, res) => {
+  
+  // Create parameters and assign the inserted value to these parameters
+  let {date, modal, product, price_per_product, quantity_sold} = req.body;
+  let errors = [];
+  var i = 0;
+  var isSuccess = false;
+  
+  console.log({
+    date, modal, product, price_per_product, quantity_sold
+  });
+
+  if (!date || !modal || !product || !price_per_product || !quantity_sold) {
+    errors.push({ message: "Please enter all fields" });
+  }
+  // Callback function that redirect back to add sales data page once user click submit and print the success message
+  async function callback(){
+    req.flash("success_msg", "Sales successfully added.");
+    res.redirect("/add_sales/add-sales-data");
+  }
+
+  try{
+    if(product.length > 1 && Array.isArray(product)){
+      product.forEach( async element => {
+        pool.query('INSERT INTO "add_sales" (date, modal, product, price_per_product, quantity_sold, vendor_id) VALUES ($1, $2, $3, $4, $5, $6)', 
+        [date, modal, element, price_per_product[i], quantity_sold[i], req.user.id], 
+        (err, results) =>{
+          if (err) {
+            console.log(err);
+          }else{
+            if(i == product.length){
+              isSuccess = true;
+            }
+            console.log(results.rows);
+          }
+        })
+        i++;
+      });
+    }else{
+      pool.query('INSERT INTO "add_sales" (date, modal, product, price_per_product, quantity_sold, vendor_id) VALUES ($1, $2, $3, $4, $5, $6)', 
+        [date, modal, product, price_per_product, quantity_sold, req.user.id], 
+        (err, results) =>{
+          if (err) {
+            console.log(err);
+          }else{
+            console.log(results.rows);
+          }
+      });          
+    }
+  }finally{
+    await callback();
+  }
+});
+
+/*
+   This class is to show all the sales that had been insert
+*/
+app.get("/add_sales/sales", checkNotAuthenticated, (req, res) => {
+  console.log(req.isAuthenticated());
+
+  let sales = [];
+  pool.query('SELECT * FROM add_sales WHERE vendor_id = $1', [req.user.id],
+  (err, results) => {
+    if(err){
+      throw err;
+    }else{
+      console.log(results.rows);
+      sales = results.rows;
+      res.render("sales", { sales: sales });
+    }
+  } );
+});
+
+/* 
+  Class that delete sale data from database based on sales id and vendor id
+*/
+app.get("/add_sales/delete-sale/:_salesId", checkNotAuthenticated, (req, res) => {
+  const {_salesId} = req.params;
+  
+  console.log(req.isAuthenticated());
+
+  pool.query('DELETE FROM add_sales WHERE vendor_id = $1 AND sales_id = $2', 
+  [req.user.id, _salesId], 
+  (err, results) => {
+    if(err){
+      throw err;
+    }else{
+      console.log(results.rows);
+      req.flash("success_msg", "The sales information have been deleted.");
+      res.redirect("/add_sales/sales");
+    }
+  }); 
+});
+
+/*
+  Class that retrieve all the data that wanted to be edit and show it on the edit sales page
+*/
+app.get("/add_sales/edit-sales/:_salesId", checkNotAuthenticated, (req, res) => {
+  const {_salesId} = req.params;
+  
+  console.log(req.isAuthenticated());
+  let sales = [];
+
+  pool.query('SELECT * FROM add_sales WHERE vendor_id = $1 AND sales_id = $2', [req.user.id, _salesId],
+  (err, results) => {
+    if(err){
+      throw err;
+    }else{
+      console.log(results.rows);
+      sales = results.rows;
+      res.render("edit-sales", {sales: sales});
+    }
+  } );
+});
+
+/*
+  Class that update the editted data into the database
+*/
+app.post("/add_sales/edit-sales/:_salesId", async (req, res) => {
+  const {_salesId} = req.params;
+  let {date, modal, product, price_per_product, quantity_sold } = req.body;
+  let errors = [];
+  
+  console.log({
+    date, modal, product, price_per_product, quantity_sold
+  });
+
+  if (!date || !modal || !product || !price_per_product || !quantity_sold){
+    console.log("Please fill out all the fields required.");
+  }else{
+    console.log("UPDATE add_sales SET date =" + date + ", modal = "+modal+", product ="+product+", price_per_product ="+ price_per_product+", quantity_sold = "+quantity_sold+" WHERE vendor_id = $6 AND sales_id = "+_salesId);
+    pool.query('UPDATE add_sales SET date = $1, modal = $2, product = $3, price_per_product = $4, quantity_sold = $5 WHERE vendor_id = $6 AND sales_id = $7',
+    [date, modal, product, price_per_product, quantity_sold, req.user.id, _salesId],
+    (err, results) => {
+      if(err){
+        throw err;
+      }else{
+        console.log(results.rows);
+        req.flash("success_msg", "Data has been updated.");
+        res.redirect("/add_sales/sales");
+      }
+    }
+    );
+  }
+});
+
+app.get("/sales_report/sales-report", checkNotAuthenticated, (req, res) => {
+  console.log(req.isAuthenticated());
+  res.render("sales-report.ejs");
+});
+
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return res.redirect("/users/dashboard");
