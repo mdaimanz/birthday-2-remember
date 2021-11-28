@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import UserDashboard from '../views/UserDashboard.vue'
 import Reminder from '../views/Reminder.vue'
+import UserSetting from '../views/UserSetting.vue'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,11 @@ const routes = [
     path: '/reminder',
     name: 'Reminder',
     component: Reminder
+  },
+  {
+    path: '/usersetting',
+    name: 'UserSetting',
+    component: UserSetting
   }
 ]
 
