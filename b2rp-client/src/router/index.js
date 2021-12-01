@@ -6,6 +6,7 @@ import Register from '../views/Register.vue'
 import UserDashboard from '../views/UserDashboard.vue'
 import Reminder from '../views/Reminder.vue'
 import UserSetting from '../views/UserSetting.vue'
+import NewsAndPromo from '../views/NewsAndPromo.vue'
 
 Vue.use(VueRouter)
 
@@ -47,6 +48,11 @@ const routes = [
     path: '/usersetting',
     name: 'UserSetting',
     component: UserSetting
+  },
+  {
+    path: '/newsandpromo',
+    name: 'NewsAndPromo',
+    component: NewsAndPromo
   }
 ]
 
