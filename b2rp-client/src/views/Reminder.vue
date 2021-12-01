@@ -264,7 +264,7 @@
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
           { title: 'Shopping', icon: 'mdi-shopping', path: '/shopping' },
-          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/news' },
+          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
           { title: 'Logout', icon: 'mdi-logout', path: '/logout' },
         ],

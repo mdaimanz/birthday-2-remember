@@ -41,7 +41,7 @@
 
     <v-app-bar app class="cyan lighten-3 white--text">
 
-      <v-toolbar-title>Home</v-toolbar-title>
+      <v-toolbar-title>News and Promo</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -78,119 +78,96 @@
             
         </v-row>
 
-        <v-row justify="center" class="pa-4">
-        <v-responsive justify="center" max-width="1300" max-height="">
-          <v-card-text>
-            <v-carousel cycle hide-delimiters 
-            class="rounded-xl">
-              <v-carousel-item
-                v-for="(item,i) in items"
-                :key="i"
-                :src="item.src"
-              ></v-carousel-item>
-            </v-carousel>
-          </v-card-text>
-        </v-responsive>
-        
-      </v-row>
 
         <v-row justify="center" class="pa-10">
         
         <div class="display-1">
-          Latest News
+          Latest Promotion
         </div>
       </v-row>
-          <v-row justify="center" class="pt-1">
-            
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
+        <v-row justify="center" class="pt-1">
         
-   
+        
+        <v-col v-for="item in promo_items"
+          :key="item.promo_id"> 
+          <v-card
+          class="mx-auto"
+          max-width="344"
+          >
+            <v-img
+              :src="item.picture_path"
+              height="200px"
+            ></v-img>
+
+            <v-card-title>
+              {{item.title}}
+            </v-card-title>
+
+            <v-card-subtitle>
+              {{item.description}}
+            </v-card-subtitle>
+
+            <v-card-actions>
+              <v-btn
+                color="cyan lighten-2"
+                text
+                to="item."
+              >
+                Learn more
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>   
     </v-row>
+
+    <v-row justify="center" class="pa-10">
+        
+        <div class="display-1">
+          Latest News
+        </div>
+    </v-row>
+
+  <v-row v-for="item in news_items"
+          :key="item.news_id">
+  <v-card
+    class="mx-auto mb-2"
+    width="1080"
+    outlined
+  >
+    <v-list-item three-line>
+      <v-list-item-content>
+        <div class="text-overline mb-4">
+          {{item.news_date}}
+        </div>
+            <v-list-item-title class="text-h4 mb-1">
+              {{item.headline}}
+            </v-list-item-title>
+            <v-list-item-subtitle>{{item.description}}</v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-img       
+              :src="item.picture_path"
+              max-height="200px"
+              max-width="300px"
+        ></v-img>
+        </v-list-item>
+
+        <v-card-actions>
+          <v-btn
+            class="cyan lighten-2 white--text"
+            outlined
+            rounded
+            text
+            to=""
+          >
+            Read 
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+
+    </v-row>
+
+
       </v-container>
     </v-main>
       <v-footer padless app class="mt-10">
@@ -213,11 +190,48 @@
  export default {
    data(){
      return{
+       promo_items: [
+         { promo_id: '1',
+           title: 'Membership Promotion', 
+           description: 'Not registered as member yet? Register now and enjoy our membership promotion', 
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+           path: '/promo1'
+         },
+         { promo_id: '2',
+           title: 'Christmas Sale', 
+           description: 'Merry Christmas', 
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+           path: '/promo1'
+         },
+         { promo_id: '3',
+           title: 'Christmas Sale', 
+           description: 'Merry Christmas', 
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+           path: '/promo1'
+         },
+       ],
+       news_items:[
+         {
+           news_id:'1',
+           news_date: '7/2/2020',
+           headline: 'New Branch Launches in Kuala Lumpur',
+           description: 'Introducing to you our new branch ',
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+         },
+         {
+           news_id:'2',
+           news_date: '8/2/2020',
+           headline: 'New Branch',
+           description: 'Introducing to you our new branch ',
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+         }
+
+       ],
        dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
           { title: 'Shopping', icon: 'mdi-shopping', path: '/shopping' },
-          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
+          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/news' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
           { title: 'Logout', icon: 'mdi-logout', path: '/logout' },
         ],
@@ -235,22 +249,7 @@
             src: 'https://images.unsplash.com/photo-1586985289906-406988974504?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80',
           },
         ],
-        right: null,
-        carousell_items: [
-          {
-            src: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1089&q=80',
-          },
-          {
-            src: 'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80',
-          },
-          {
-            src: 'https://images.unsplash.com/photo-1566121933407-3c7ccdd26763?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1173&q=80',
-          },
-          {
-            src: 'https://images.unsplash.com/photo-1586985289906-406988974504?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80',
-          }
-          
-        ],
+        
      }
    },
    //sample method
