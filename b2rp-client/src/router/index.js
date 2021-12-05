@@ -1,12 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import News from '../views/News.vue'
+import Location from '../views/Location.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import UserDashboard from '../views/UserDashboard.vue'
 import Reminder from '../views/Reminder.vue'
 import UserSetting from '../views/UserSetting.vue'
 import NewsAndPromo from '../views/NewsAndPromo.vue'
+
 
 Vue.use(VueRouter)
 
@@ -53,6 +56,16 @@ const routes = [
     path: '/newsandpromo',
     name: 'NewsAndPromo',
     component: NewsAndPromo
+  },
+  {
+    path: '/news',
+    name: 'News',
+    component: News
+  },
+  {
+    path: '/location',
+    name: 'Location',
+    component: Location
   }
 ]
 
