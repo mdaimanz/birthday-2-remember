@@ -23,7 +23,6 @@
           class=""
           plain
           color="cyan"
-          to="/news"
         >
           News
         </v-btn>
@@ -67,120 +66,55 @@
     <v-main class="pt-3">
       
       <v-row justify="center" class="pa-4">
-        <v-responsive justify="center" max-width="1300" max-height="">
-          <v-card-text>
-            <v-carousel cycle hide-delimiters 
-            class="rounded-xl">
-              <v-carousel-item
-                v-for="(item,i) in items"
-                :key="i"
-                :src="item.src"
-              ></v-carousel-item>
-            </v-carousel>
-          </v-card-text>
-        </v-responsive>
         
       </v-row>
       
-      <v-row class="pt-10"><v-divider></v-divider></v-row>
-
       <v-row justify="center" class="pa-10">
         
         <div class="display-1">
-          Daily News
+          News
         </div>
       </v-row>
 
-      <v-row justify="center" class="pt-1">
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
+      <v-row v-for="item in news_items"
+          :key="item.news_id">
+  <v-card
+    class="mx-auto mb-2"
+    width="1080"
+    outlined
+  >
+    <v-list-item three-line>
+      <v-list-item-content>
+        <div class="text-overline mb-4">
+          {{item.news_date}}
+        </div>
+            <v-list-item-title class="text-h4 mb-1">
+              {{item.headline}}
+            </v-list-item-title>
+            <v-list-item-subtitle>{{item.description}}</v-list-item-subtitle>
+          </v-list-item-content>
 
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
+          <v-img       
+              :src="item.picture_path"
+              max-height="200px"
+              max-width="300px"
+        ></v-img>
+        </v-list-item>
 
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-        
-   
+        <v-card-actions>
+          <v-btn
+            class="cyan lighten-2 white--text"
+            outlined
+            rounded
+            text
+            to=""
+          >
+            Read 
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-row>
+
 
     </v-main>
 
@@ -214,6 +148,37 @@
             src: 'https://images.unsplash.com/photo-1586985289906-406988974504?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80',
           },
         ],
+        news_items:[
+         {
+           news_id:'1',
+           news_date: '7/2/2020',
+           headline: 'New Branch Launches in Kuala Lumpur',
+           description: 'Introducing to you our new branch ',
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+         },
+         {
+           news_id:'2',
+           news_date: '8/2/2020',
+           headline: 'New Branch',
+           description: 'Introducing to you our new branch ',
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+         },
+         {
+           news_id:'3',
+           news_date: '8/2/2020',
+           headline: 'New Branch',
+           description: 'Introducing to you our new branch ',
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+         },
+         {
+           news_id:'4',
+           news_date: '8/2/2020',
+           headline: 'New Branch',
+           description: 'Introducing to you our new branch ',
+           picture_path: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
+         }
+         ]
+
      }
    },
    //sample method

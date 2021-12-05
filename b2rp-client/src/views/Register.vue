@@ -231,7 +231,8 @@ setInteractionMode('eager')
     },
     data: () => ({
       email: '',
-      password: ''
+      password: '',
+      password_confirm: ''
     }),
 
     methods: {
@@ -241,6 +242,7 @@ setInteractionMode('eager')
       clear () {
         this.email = ''
         this.password = ''
+        this.password_confirm = ''
         this.$refs.observer.reset()
       },
     },

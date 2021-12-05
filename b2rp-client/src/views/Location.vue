@@ -67,120 +67,53 @@
     <v-main class="pt-3">
       
       <v-row justify="center" class="pa-4">
-        <v-responsive justify="center" max-width="1300" max-height="">
-          <v-card-text>
-            <v-carousel cycle hide-delimiters 
-            class="rounded-xl">
-              <v-carousel-item
-                v-for="(item,i) in items"
-                :key="i"
-                :src="item.src"
-              ></v-carousel-item>
-            </v-carousel>
-          </v-card-text>
-        </v-responsive>
         
       </v-row>
       
-      <v-row class="pt-10"><v-divider></v-divider></v-row>
-
       <v-row justify="center" class="pa-10">
         
         <div class="display-1">
-          Daily News
+          Location
         </div>
       </v-row>
-
-      <v-row justify="center" class="pt-1">
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
+      <v-row v-for="item in location_items"
+          :key="item.location_id">
+  <v-card
+    class="mx-auto mb-2"
+    width="1080"
+    outlined
+  >
+    <v-list-item three-line>
+      <v-list-item-content>
         
-   
+            <v-list-item-title class="text-h4 mb-1">
+              {{item.title}}
+            </v-list-item-title>
+            <v-list-item-subtitle>{{item.address_1}} {{item.address_2}}</v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-img       
+              :src="item.picture_path"
+              max-height="200px"
+              max-width="300px"
+        ></v-img>
+        </v-list-item>
+
+        <v-card-actions>
+          <v-btn
+            class="cyan lighten-2 white--text"
+            outlined
+            rounded
+            text
+            to=""
+          >
+            {{item.status}} 
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-row>
+      
+
 
     </v-main>
 
@@ -214,6 +147,34 @@
             src: 'https://images.unsplash.com/photo-1586985289906-406988974504?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80',
           },
         ],
+        location_items:[
+         {
+           location_id:'1',
+           title: 'Haji Bakery Sdn Bhd, Bandar Tasik Puteri',
+           address_1: 'No 11-G, Green Valley Park, Jalan Hijau 5/1,',
+           address_2: 'Bandar Tasik Puteri, 48000 Rawang, Selangor',
+           status: 'Open',
+           picture_path: 'https://lh5.googleusercontent.com/p/AF1QipM4QgvJzhX9pMs-17_TXTSmjAtIPLk5gEPaAKfc=w1080-k-no',
+         },
+         {
+           location_id:'2',
+           title: 'Haji Bakery Sdn Bhd, Bandar Country Home',
+           address_1: 'No 20, Jalan Desa 1/1,',
+           address_2: 'Bandar Country Homes, 48000 Rawang, Selangor',
+           status: 'Open',
+           picture_path: 'https://lh5.googleusercontent.com/p/AF1QipMAObX2ioh1mnGNh9dP0u_jXpWD4PhyTYOvN7gc=w1080-k-no',
+         },
+         {
+           location_id:'3',
+           title: 'Haji Bakery Sdn Bhd, Rawang',
+           address_1: 'No 55-G, Seksyen BB5, Jalan Adenium 2g/6,',
+           address_2: '48300 Rawang, Selangor',
+           status: 'Open',
+           picture_path: 'https://cdn1.my.orstatic.com/userphoto/doorphoto/2/1LV/00BFLO8342C270683ACDC6px.jpg',
+         },
+         
+         ]
+
      }
    },
    //sample method
