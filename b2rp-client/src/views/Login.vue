@@ -56,6 +56,7 @@
       class="mr-5"
       outlined
       color="cyan"
+      to="/register"
     >
       Register
     </v-btn>
@@ -63,13 +64,33 @@
     </v-toolbar> 
 
     <v-main>
+
+      <!-- error alert -->
+      <v-alert
+      dense
+      outlined
+      class="ma-5"
+      type="error"
+      v-if="error"
+    >
+    {{error}}
+    </v-alert>
+
+    <v-alert
+      dense
+      text
+      class="ma-5"
+      type="success"
+      v-if="success"
+    >
+      {{success}}
+    </v-alert>
     <v-card
     :loading="loading"
     class="mx-auto my-12 pt-10"
     max-width="500"
     >
-    
-    
+
     <v-row justify="center">
       <v-card-title class="display-1 pt-5">
         Welcome back!
@@ -120,6 +141,7 @@
         type="submit"
         color="cyan"
         :disabled="invalid"
+        @click="login"
       >
         login
       </v-btn>
@@ -148,7 +170,7 @@
   </v-card>
     </v-main>
 
-    <v-footer bottom fixed padless class="">
+    <v-footer fixed bottom padless class="">
     <v-col
       class="cyan lighten-3 white--text text-center"
       cols="12"
@@ -162,6 +184,7 @@
 <script>
 import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
 import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+import AuthenticationService from '@/services/AuthenticationService'
 
 setInteractionMode('eager')
 
@@ -197,7 +220,9 @@ setInteractionMode('eager')
     },
     data: () => ({
       email: '',
-      password: ''
+      password: '',
+      error: null,
+      success: null
     }),
 
     methods: {
@@ -209,6 +234,23 @@ setInteractionMode('eager')
         this.password = ''
         this.$refs.observer.reset()
       },
+
+      async login(){
+        try{
+          
+          const response = await AuthenticationService.login({
+            email: this.email,
+            password: this.password,
+          })
+          console.log("Respond Status: "+response.status)
+          console.log(response.data)
+          
+        }catch(error){
+          console.log("Respond Status: "+error.response.status)
+          console.log(error.response.data.error)
+          this.error = error.response.data.error
+        }
+      }
     },
   }
 

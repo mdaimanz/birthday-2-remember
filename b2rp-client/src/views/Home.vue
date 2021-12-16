@@ -185,7 +185,7 @@
     </v-main>
 
 
-    <v-footer padless class="mt-10">
+    <v-footer app bottom padless  class="mt-10">
     <v-col
       class="cyan lighten-3 white--text text-center"
       cols="12"

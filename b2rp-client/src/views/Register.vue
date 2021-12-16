@@ -64,6 +64,27 @@
     </v-toolbar> 
 
     <v-main>
+<!-- error alert -->
+      <v-alert
+      dense
+      outlined
+      class="ma-5"
+      type="error"
+      v-if="error"
+    >
+    {{error}}
+    </v-alert>
+
+    <v-alert
+      dense
+      text
+      class="ma-5"
+      type="success"
+      v-if="success"
+    >
+      {{success}}
+    </v-alert>
+
     <v-card
     :loading="loading"
     class="mx-auto my-12 pt-10"
@@ -87,6 +108,21 @@
     v-slot="{ invalid }"
   >
     <form class="px-10" @submit.prevent="submit">
+
+      <validation-provider
+        v-slot="{ errors }"
+        name=""
+        rules="required"
+      >
+        <v-text-field
+          v-model="name"
+          @change="clearAlert"
+          :error-messages="errors"
+          label="Name"
+          required
+        ></v-text-field>
+      </validation-provider>
+
       <validation-provider
         v-slot="{ errors }"
         name="email"
@@ -94,6 +130,7 @@
       >
         <v-text-field
           v-model="email"
+          @change="clearAlert()"
           :error-messages="errors"
           label="E-mail"
           required
@@ -105,11 +142,12 @@
         name="phoneNumber"
         :rules="{
           required: true,
-          regex: '^(60)\\d{5}$'
+          regex: '^(60)'
         }"
       >
         <v-text-field
-          v-model="phoneNumber"
+          v-model="phone_num"
+          @change="clearAlert()"
           :error-messages="errors"
           label="Phone Number"
           required
@@ -124,6 +162,7 @@
       >
         <v-text-field
           v-model="password"
+          @change="clearAlert()"
           :error-messages="errors"
           input type="password"
           label="Password"
@@ -139,6 +178,7 @@
       >
         <v-text-field
           v-model="password_confirm"
+          @onchange="clearAlert()"
           :error-messages="errors"
           input type="password"
           label="Password Confirmation"
@@ -154,6 +194,7 @@
         type="submit"
         color="cyan"
         :disabled="invalid"
+        @click="register"
       >
         submit
       </v-btn>
@@ -182,7 +223,7 @@
   </v-card>
     </v-main>
 
-    <v-footer bottom fixed padless class="">
+    <v-footer fixed bottom padless class="">
     <v-col
       class="cyan lighten-3 white--text text-center"
       cols="12"
@@ -196,6 +237,7 @@
 <script>
 import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
 import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+import AuthenticationService from '@/services/AuthenticationService'
 
 setInteractionMode('eager')
 
@@ -230,9 +272,14 @@ setInteractionMode('eager')
       ValidationObserver,
     },
     data: () => ({
-      email: '',
-      password: '',
-      password_confirm: ''
+        name: '',
+        email: '',
+        password: '',
+        password_confirm: '',
+        phone_num: '',
+        error: null,
+        success: null
+
     }),
 
     methods: {
@@ -241,10 +288,39 @@ setInteractionMode('eager')
       },
       clear () {
         this.email = ''
+        this.phone_num=''
         this.password = ''
         this.password_confirm = ''
         this.$refs.observer.reset()
       },
+
+      clearAlert(){
+        this.error=null
+        this.success=null
+      },
+
+      async register (){
+        try{
+          const response = await AuthenticationService.register({
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            password_confirm: this.password_confirm,
+            phone_num: this.phone_num
+          })
+          
+          console.log("Respond Status: "+response.status)
+          console.log(response.data)
+          if(response.status==200){
+            this.success = response.data.message
+          }
+          
+        }catch(error){
+          console.log("Respond Status: "+error.response.status)
+          console.log(error.response.data.error)
+          this.error = error.response.data.error
+        }  
+      }
     },
   }
 
