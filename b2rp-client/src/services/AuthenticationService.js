@@ -6,5 +6,10 @@ export default {
     },
     login(credentials){
         return Api().post('login', credentials)
+    },
+    logout(){
+        this.$store.dispatch('setToken', null)
+        this.$store.dispatch('setUser', null)
+        this.$router.push({name: 'Home'})
     }
 }
