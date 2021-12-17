@@ -242,11 +242,13 @@ setInteractionMode('eager')
             email: this.email,
             password: this.password,
           })
-          console.log("Respond Status: "+response.status)
           console.log(response.data)
+          this.$store.dispatch('setToken', response.data.token)
+          this.$store.dispatch('setUser', response.data.user)
+          this.$router.push({name: 'UserDashboard'})
           
         }catch(error){
-          console.log("Respond Status: "+error.response.status)
+          console.log("Respond Status: "+error.response.data.status)
           console.log(error.response.data.error)
           this.error = error.response.data.error
         }
