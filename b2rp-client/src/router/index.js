@@ -12,7 +12,7 @@ import NewsAndPromo from '../views/NewsAndPromo.vue'
 import Shop from '../views/Shop.vue'
 import EditReminder from '../views/EditReminder.vue'
 import NewsTemplate from '../views/NewsTemplate.vue'
-
+import NewsDashboard from '../views/NewsDashboard.vue'
 
 
 
@@ -86,6 +86,11 @@ const routes = [
     path: '/news/:newsId',
     name: 'NewsTemplate',
     component: NewsTemplate
+  },
+  {
+    path: '/newsdashboard',
+    name: 'NewsDashboard',
+    component: NewsDashboard
   },
   
 ]
