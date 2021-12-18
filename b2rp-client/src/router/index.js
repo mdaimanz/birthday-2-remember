@@ -9,8 +9,12 @@ import UserDashboard from '../views/UserDashboard.vue'
 import Reminder from '../views/Reminder.vue'
 import UserSetting from '../views/UserSetting.vue'
 import NewsAndPromo from '../views/NewsAndPromo.vue'
-import Sales from '../views/Sales.vue'
-import VendorSetting from '../views/VendorSetting.vue'
+import Shop from '../views/Shop.vue'
+import EditReminder from '../views/EditReminder.vue'
+import NewsTemplate from '../views/NewsTemplate.vue'
+
+
+
 
 Vue.use(VueRouter)
 
@@ -69,15 +73,21 @@ const routes = [
     component: Location
   },
   {
-    path: '/sales',
-    name: 'Sales',
-    component: Sales
+    path: '/shop',
+    name: 'Shop',
+    component: Shop
   },
   {
-    path: '/vendorsetting',
-    name: 'VendorSetting',
-    component: VendorSetting
-  }
+    path: '/editreminder/:remindId',
+    name: 'Edit Reminder',
+    component: EditReminder
+  },
+  {
+    path: '/news/:newsId',
+    name: 'NewsTemplate',
+    component: NewsTemplate
+  },
+  
 ]
 
 const router = new VueRouter({
