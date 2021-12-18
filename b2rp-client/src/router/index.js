@@ -9,7 +9,8 @@ import UserDashboard from '../views/UserDashboard.vue'
 import Reminder from '../views/Reminder.vue'
 import UserSetting from '../views/UserSetting.vue'
 import NewsAndPromo from '../views/NewsAndPromo.vue'
-
+import Sales from '../views/Sales.vue'
+import VendorSetting from '../views/VendorSetting.vue'
 
 Vue.use(VueRouter)
 
@@ -66,6 +67,16 @@ const routes = [
     path: '/location',
     name: 'Location',
     component: Location
+  },
+  {
+    path: '/sales',
+    name: 'Sales',
+    component: Sales
+  },
+  {
+    path: '/vendorsetting',
+    name: 'VendorSetting',
+    component: VendorSetting
   }
 ]
 
