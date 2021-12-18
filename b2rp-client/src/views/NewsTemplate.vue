@@ -23,6 +23,7 @@
           class=""
           plain
           color="cyan"
+          to="/news"
         >
           News
         </v-btn>
@@ -64,62 +65,42 @@
     </v-col>
     </v-toolbar> 
     <v-main class="pt-3">
-      
-      <v-row justify="center" class="pa-4">
-        
-      </v-row>
-      
       <v-row justify="center" class="pa-10">
-        
-        <div class="display-1">
-          News
-        </div>
       </v-row>
 
-      <v-row v-for="item in news_items"
-          :key="item.news_items">
-  <v-card
-    class="mx-auto mb-5"
-    width="1080"
-    outlined
-  >
-    <v-list-item three-line>
-      <v-list-item-content>
-        <div class="text-overline mb-4">
-          {{item.post_date}}
-        </div>
-            <v-list-item-title class="text-h4 mb-1">
-              {{item.news_title}}
-            </v-list-item-title>
-            <v-list-item-subtitle>{{item.news_content}}</v-list-item-subtitle>
-          </v-list-item-content>
+      <v-row justify="center" class="pa-4">
+        <v-card
+          class="mx-auto"
+          max-width="800"
+        >
+          <v-img
+            :src="news_item.image_path"
+            height="200px"
+          ></v-img>
+          <v-row justify="center" class="pt-4">
+          <v-card-title>
+            {{news_item.news_title}}
+          </v-card-title>
+          </v-row>
+          <v-row justify="center" class="pt-0">
+          <v-card-subtitle>
+            {{news_item.post_date}}
+          </v-card-subtitle>
+          </v-row>
+          <v-divider></v-divider>
+          <v-row>
+            <v-card-text justify="center" class="pa-5 ma-5">
+              {{news_item.news_content}}
+            </v-card-text>
+          </v-row>
 
-          <v-img       
-              :src="item.image_path"
-              max-height="200px"
-              max-width="300px"
-        ></v-img>
-        </v-list-item>
-
-        <v-card-actions>
-          <v-btn
-            class="cyan lighten-2 white--text"
-            outlined
-            rounded
-            text
-            @click="goToNewsPage(item.news_id)"
-          >
-            Read
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-row>
-
+        </v-card>
+      </v-row>
 
     </v-main>
 
 
-    <v-footer bottom padless class="mt-10">
+    <v-footer app bottom padless  class="mt-10">
     <v-col
       class="cyan lighten-3 white--text text-center"
       cols="12"
@@ -135,25 +116,18 @@ import NewsService from '@/services/NewsService'
  export default {
    data(){
      return{
-        news_items:[]
-
+       news_item:[]
      }
    },
-   computed:{
-      
-  },
+
    async mounted (){
-        const response = (await NewsService.getNews())
-        this.news_items = response.data
-        console.log(response.data)
+        const response = (await NewsService.getNewsContent(this.$route.params.newsId))
+        this.news_item = response.data[0]
+        //console.log(response.data[0])
         // this.news_items = response.data
-      },
-   //sample method
+    },
+   
    methods:{
-    goToNewsPage(newsId){
-      let news_path = '/news/'+newsId
-      this.$router.push({ path: news_path})
-    }
      
    }
  }
