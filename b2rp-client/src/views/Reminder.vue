@@ -9,7 +9,6 @@
             Birthday2Remember
           </v-list-item-title>
           <v-list-item-subtitle>
-            Hi user!
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -71,26 +70,45 @@
 
     <v-main>
       <v-container fluid class="mx-auto">
-    <v-row class="text-center" justify="center">
-    <v-list
-      flat class="pa-3"
-    >
-    <v-card
-      class="mx-auto"
-      width="900"
-      outlined
-    >
-    <v-data-table
+        <v-row justify="center">
+            <v-alert
+            dense
+            text
+            class="ma-5"
+            type="success"
+            v-if="success_msg"
+            >
+            {{success_msg}}
+            </v-alert>
+        </v-row>
+        <v-row justify="center">
+            <!-- error alert -->
+            <v-alert
+            dense
+            outlined
+            class="ma-5"
+            type="error"
+            v-if="error_msg"
+            >
+            {{error_msg}}
+            </v-alert>
+        </v-row>
+        <v-row class="text-center" justify="center">
+        
+            
+        
+
+  <v-data-table
     :headers="headers"
-    :items="reminders"
-    sort-by="date"
+    :items="reminders_items"
+    sort-by="calories"
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title></v-toolbar-title>
+        <v-toolbar-title>Reminder List</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -99,7 +117,7 @@
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="800px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -120,56 +138,33 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
                     <v-text-field
                       v-model="editedItem.title"
                       label="Title"
+                      :rules="rules"
                     ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.date"
-                      label="Date"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                </v-row>
+                <v-row>
                     <v-text-field
                       v-model="editedItem.description"
                       label="Description"
+                      :rules="rules"
                     ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                </v-row>
+                
+                <v-row>
                     <v-text-field
                       v-model="editedItem.remind_date"
                       label="Remind Date"
+                      :rules="rules"
                     ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                </v-row>
+                <v-row>
                     <v-text-field
                       v-model="editedItem.remind_time"
                       label="Remind Time"
+                      :rules="rules"
                     ></v-text-field>
-                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -230,14 +225,10 @@
       </v-btn>
     </template>
   </v-data-table>
-    
-    </v-card>
-
-    </v-list>
-    </v-row>
+  </v-row>
 
         
-          
+
       </v-container>
     </v-main>
       <v-footer bottom padless app class="mt-10">
@@ -257,9 +248,15 @@
 </template>
 
 <script>
- export default {
+import ReminderService from '@/services/ReminderService'
+
+export default {
    data(){
      return{
+       success_msg: '',
+       error_msg: '',
+       dialog: false,
+       dialogDelete: false,
        dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
@@ -267,54 +264,44 @@
           { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
         ],
-        right: null,
-        carousell_items: [
-          {
-            src: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1089&q=80',
-          },
-          {
-            src: 'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80',
-          },
-          {
-            src: 'https://images.unsplash.com/photo-1566121933407-3c7ccdd26763?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1173&q=80',
-          },
-          {
-            src: 'https://images.unsplash.com/photo-1586985289906-406988974504?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80',
-          }
-          
-        ],
-        dialog: false,
-        dialogDelete: false,
+        reminders_items:[],
         headers: [
           {
-            text: 'Title',
+            text: 'Reminder ID',
             align: 'start',
-            sortable: false,
-            value: 'title',
+            sortable: true,
+            value: 'remind_id',
           },
-          { text: 'Date', value: 'date' },
-          { text: 'Description', value: 'description', sortable: false},
-          { text: 'Remind Date', value: 'remind_date' },
-          { text: 'Remind Time', value: 'remind_time', sortable: false},
+          { text: 'Title', value: 'title' ,sortable: false },
+          { text: 'Description', value: 'description', sortable: false },
+          { text: 'Remind Date', value: 'remind_date', sortable: false },
+          { text: 'Remind Time', value: 'remind_time', sortable: false },
           { text: 'Actions', value: 'actions', sortable: false },
         ],
-        reminders: [],
         editedIndex: -1,
         editedItem: {
-          title: '',
-          desription: '',
-          remind_date: '',
-          remind_time: '',
+            title: '',
+            description: '',
+            remind_date: '',
+            remind_time: ''
         },
-        defaultItem: {
-          title: '',
-          desription: '',
-          remind_date: '',
-          remind_time: '',
-        },
+        rules: [
+        value => !!value || 'Required.',
+        value => (value && value.length >= 3) || 'Min 3 characters',
+        ],
+        
+        
+        
      }
    },
-   computed: {
+   async mounted (){
+        const response = (await ReminderService.getAllReminder(this.$store.state.user.id))
+        this.reminders_items = response.data
+        console.log(response.data)
+        // this.news_items = response.data
+    },
+
+    computed: {
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
@@ -329,32 +316,42 @@
       },
     },
 
-    created () {
-      this.initialize()
-    },
-   
    methods:{
-     initialize(){
-       this.reminders=[
-         {title: "Dad's birthday", description:"59th Birthday", date: '06/07/1976',remind_date: '05/07/2021', remind_time: '12.00 a.m.',},
-         {title: "Mom's birthday", description:"46th Birthday", date: '13/12/1976',remind_date: '12/12/2021', remind_time: '12.00 a.m.',},
-       ]
-       
-     },
-     editItem (item) {
-        this.editedIndex = this.reminders.indexOf(item)
+       async initialize (){
+           const response = (await ReminderService.getAllReminder(this.$store.state.user.id))
+           this.reminders_items = response.data
+          //  console.log(this.reminders_items)
+       },
+       editItem (item) {
+        // let remind_id = item.remind_id
+        // console.log(remind_id)
+        this.editedIndex = this.reminders_items.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        this.editedIndex = this.reminders.indexOf(item)
+        this.editedIndex = this.reminders_items.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
-      deleteItemConfirm () {
-        this.reminders.splice(this.editedIndex, 1)
+      async deleteItemConfirm () {
+        let remind_id = this.reminders_items[this.editedIndex].remind_id
+        let user_id = this.$store.state.user.id
+        console.log(remind_id)
+        try{
+            const response = (await ReminderService.deleteReminder(user_id,remind_id))
+            console.log(response.data)
+            if(response.status==200){
+                this.success_msg = response.data.message
+            }
+            this.reminders_items.splice(this.editedIndex, 1)
+            this.initialize()
+        }catch(error){
+            console.log(error.response.data.error)
+            this.error_msg = error.response.data.error
+        }
         this.closeDelete()
       },
 
@@ -374,22 +371,49 @@
         })
       },
 
-      save () {
+      async save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.reminders[this.editedIndex], this.editedItem)
+            let remind_id = this.reminders_items[this.editedIndex].remind_id
+            console.log("Index: "+this.editedIndex)
+            console.log("Remind ID: "+remind_id)
+            try{
+                const response = (await ReminderService.editReminder(this.$store.state.user.id,remind_id,this.editedItem))
+                console.log(response.data)
+                if(response.status==200){
+                    this.success_msg = response.data.message
+                }
+                Object.assign(this.reminders_items[this.editedIndex], this.editedItem)
+                this.initialize()
+            }catch(error){
+                console.log(error.response.data.error)
+                this.error_msg = error.response.data.error
+            }
+          
         } else {
-          this.reminders.push(this.editedItem)
+            try{
+                const response = (await ReminderService.addReminder(this.$store.state.user.id,this.editedItem))
+                console.log(response.data)
+                if(response.status==200){
+                    this.success_msg = response.data.message
+                }
+                this.reminders_items.push(this.editedItem)
+                this.initialize()
+            }catch(error){
+                console.log(error.response.data.error)
+                this.error_msg = "Database error"
+            }
         }
         this.close()
       },
 
-      logout(){
+       logout(){
        console.log("Logout")
         this.$store.dispatch('setToken', null)
         this.$store.dispatch('setUser', null)
         this.$router.push({name: 'Home'})
      },
-     
+    
+    
      
    }
  }
