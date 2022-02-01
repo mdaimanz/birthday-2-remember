@@ -170,7 +170,7 @@
 
       </v-container>
     </v-main>
-      <v-footer padless app class="mt-10">
+      <v-footer bottom padless app class="mt-10">
     <v-col
       class="cyan lighten-3 white--text text-center"
       cols="12"
@@ -230,7 +230,7 @@
        dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
-          { title: 'Shopping', icon: 'mdi-shopping', path: '/shopping' },
+          { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
           { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/news' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
           { title: 'Logout', icon: 'mdi-logout', path: '/logout' },

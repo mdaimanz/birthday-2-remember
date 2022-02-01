@@ -22,7 +22,7 @@
       >
         <v-list-item
           v-for="item in dashboard_items"
-          :key="item.title"
+          :key="item.title+'a'"
           :to="item.path"
           link
         >
@@ -70,219 +70,136 @@
 
     <v-main>
       <v-container fluid class="mx-auto">
-    
-      <v-flex d-flex flex-wrap>
-          <v-flex d-flex md4 v-for="item in product_items" :key="item.product_items">
-            <v-card 
-            :loading="loading"
-            class="ma-5"
-            max-width="374"
-            >
-            <v-button v-on:click="goToProduct(item.productID)">            
-              <v-img
-                height="250"
-                :src="item.productPicture"
-              ></v-img>
-            </v-button>
-
-              <v-card-title>{{item.productName}}</v-card-title>
-
-              <v-card-text>
-                <v-row
-                  align="center"
-                  class="mx-0"
-                >
-                  <v-rating
-                    :value="item.productRating"
-                    color="amber"
-                    dense
-                    half-increments
-                    readonly
-                    size="14"
-                  ></v-rating>
-
-                  <div class="grey--text ms-4">
-                  {{item.productRating}}
-                  </div>
-                </v-row>
-
-                <div class="my-4 text-subtitle-1">
-                  {{item.productCategory}}
-                </div>
-
-                <div>{{item.productDesc}}</div>
-              </v-card-text>
-            </v-card>
-          </v-flex>
-      </v-flex>
-
-      <v-data-iterator
-      :items="product_items"
-      :items-per-page.sync="itemsPerPage"
-      :page.sync="page"
-      :search="search"
-      :sort-by="sortBy.toLowerCase()"
-      :sort-desc="sortDesc"
-      hide-default-footer
-    >
-      <template v-slot:header>
-        <v-toolbar
-          dark
-          color="blue darken-3"
-          class="mb-1"
+      
+      <div class="row">
+        <div
+         class="col-md-2 col-sm-3 col-xs-12"
         >
-          <v-text-field
-            v-model="search"
-            clearable
-            flat
-            solo-inverted
-            hide-details
-            prepend-inner-icon="mdi-magnify"
-            label="Search"
-          ></v-text-field>
-          <template v-if="$vuetify.breakpoint.mdAndUp">
-            <v-spacer></v-spacer>
-            <v-select
-              v-model="sortBy"
+          <v-card outlined>
+            <v-card-title>Filters</v-card-title>
+            <v-divider></v-divider>
+            <template>
+              <div class="" :key="item.product_category" v-for="item in items">
+                <v-btn text @click="filtered(item.product_category)">
+                  {{item.product_category}}
+                </v-btn>
+              </div>
+            </template>
+            <!-- <v-divider></v-divider>
+            <v-card-title>Price</v-card-title>
+            <v-range-slider
+              v-model="range"
+              :max="max"
+              :min="min"
+              :height="10"
+              class="align-center"
+              dense
+            ></v-range-slider>
+            <v-row class="pa-2" dense>
+              <v-col cols="12" sm="5">
+                <v-text-field
+                  :value="range[0]"
+                  label="Min"
+                  outlined
+                  dense
+                  @change="$set(range, 0, $event)"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="2">
+                <p class="pt-2 text-center">TO</p>
+              </v-col>
+              <v-col cols="12" sm="5">
+                <v-text-field
+                  :value="range[1]"
+                  label="Max"
+                  outlined
+                  dense
+                  @change="$set(range, 1, $event)"
+                ></v-text-field>
+              </v-col> 
+            </v-row> -->
+            <v-divider></v-divider>
+            <!-- <v-card-title class="pb-0">Customer Rating</v-card-title>
+            <v-container class="pt-0"  fluid>
+              <v-checkbox append-icon="mdi-star" label="4 & above" hide-details dense></v-checkbox>
+              <v-checkbox append-icon="mdi-star" label="3 & above" hide-details dense></v-checkbox>
+              <v-checkbox append-icon="mdi-star" label="2 & above" hide-details dense></v-checkbox>
+              <v-checkbox append-icon="mdi-star" label="1 & above" hide-details dense></v-checkbox>
+            </v-container>             -->
+          </v-card>
+        </div>
+        <div
+          class="col-md-9 col-sm-9 col-xs-12"
+        >
+          <v-row>
+            
+          </v-row>
+          <v-row dense>
+            <v-col cols="12" sm="6" class="">
+              <v-text-field
+              v-model="searchQuery"
               flat
               solo-inverted
               hide-details
-              :items="keys"
               prepend-inner-icon="mdi-magnify"
-              label="Sort by"
-            ></v-select>
-            <v-spacer></v-spacer>
-            <v-btn-toggle
-              v-model="sortDesc"
-              mandatory
-            >
-              <v-btn
-                large
-                depressed
-                color="blue"
-                :value="false"
-              >
-                <v-icon>mdi-arrow-up</v-icon>
-              </v-btn>
-              <v-btn
-                large
-                depressed
-                color="blue"
-                :value="true"
-              >
-                <v-icon>mdi-arrow-down</v-icon>
-              </v-btn>
-            </v-btn-toggle>
-          </template>
-        </v-toolbar>
-      </template>
+              label="Search"
+              class="hidden-sm-and-down mb-5"
+            />
+              <!-- <small>Showing 1-12 of 200 products</small> -->
+            </v-col>
+            <v-col cols="12" sm="2" class="">
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-select class="" @click="printSelect()" v-model="select" :items="options" style="" outlined dense></v-select>
+            </v-col>
+          </v-row>
 
-      <template v-slot:default="product_items">
-        <v-row>
-          <v-col
-            v-for="item in product_items.items"
-            :key="item.productID"
-            cols="12"
-            sm="6"
-            md="4"
-            lg="3"
-          >
-            <v-card>
-              <v-button v-on:click="goToProduct(item.productID)">            
-              <v-img
-                height="250"
-                :src="item.productPicture"
-              ></v-img>
-            </v-button>
-              <v-card-title class="subheading font-weight-bold">
-                {{ item.productName }}
-              </v-card-title>
+          <v-divider></v-divider>
 
-              <v-divider></v-divider>
-
-              <v-list dense>
-                <v-list-item
-                  v-for="(key, index) in filteredKeys"
-                  :key="index"
+          <div class="row text-center">
+            <div class="col-md-3 col-sm-6 col-xs-12" :key="pro.product_id" v-for="pro in sortedArray">
+              <v-hover v-slot:default="{ hover }">
+                <v-card
+                  class="mx-auto"
+                  color="grey lighten-4"
+                  max-width="600"
                 >
-                  <v-list-item-content :class="{ 'blue--text': sortBy === key }">
-                    {{ key }}:
-                  </v-list-item-content>
-                  <v-list-item-content
-                    class="align-end"
-                    :class="{ 'blue--text': sortBy === key }"
+                  <v-img
+                    class="white--text align-end"
+                    :aspect-ratio="16/9"
+                    height="200px"
+                    :src="pro.image_path"
                   >
-                    {{ item[key.toLowerCase()] }}
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
-      </template>
+                    <!-- <v-card-title>{{pro.type}} </v-card-title> -->
+                    <v-expand-transition>
+                      <div
+                        v-if="hover"
+                        class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
+                        style="height: 100%;"
+                      >
+                        <v-btn v-if="hover" @click="goToProductPage(pro.product_id)" class="" outlined>VIEW</v-btn>
+                      </div>
 
-      <template v-slot:footer>
-        <v-row
-          class="mt-2"
-          align="center"
-          justify="center"
-        >
-          <span class="grey--text">Items per page</span>
-          <v-menu offset-y>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                dark
-                text
-                color="primary"
-                class="ml-2"
-                v-bind="attrs"
-                v-on="on"
-              >
-                {{ itemsPerPage }}
-                <v-icon>mdi-chevron-down</v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item
-                v-for="(number, index) in itemsPerPageArray"
-                :key="index"
-                @click="updateItemsPerPage(number)"
-              >
-                <v-list-item-title>{{ number }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-
-          <v-spacer></v-spacer>
-
-          <span
-            class="mr-4
-            grey--text"
-          >
-            Page {{ page }} of {{ numberOfPages }}
-          </span>
-          <v-btn
-            fab
-            dark
-            color="blue darken-3"
-            class="mr-1"
-            @click="formerPage"
-          >
-            <v-icon>mdi-chevron-left</v-icon>
-          </v-btn>
-          <v-btn
-            fab
-            dark
-            color="blue darken-3"
-            class="ml-1"
-            @click="nextPage"
-          >
-            <v-icon>mdi-chevron-right</v-icon>
-          </v-btn>
-        </v-row>
-      </template>
-    </v-data-iterator>
-
+                    </v-expand-transition>
+                  </v-img>
+                  <v-card-text class="text--primary">
+                    <div><a href="/product" style="text-decoration: none">{{pro.product_name}}</a></div>
+                    <div>RM{{pro.product_price}}</div>
+                  </v-card-text>
+                </v-card>
+              </v-hover>
+            </div>
+          </div>
+          <!-- <div class="text-center mt-12">
+            <v-pagination
+              v-model="page"
+              :length="6"
+            ></v-pagination>
+          </div> -->
+        </div>
+      </div>
+    
+      
       </v-container>
     </v-main>
       <v-footer bottom padless app class="mt-10">
@@ -300,8 +217,18 @@
     
   </div>
 </template>
-
+<style>
+  .v-card--reveal {
+    align-items: center;
+    bottom: 0;
+    justify-content: center;
+    opacity: .8;
+    position: absolute;
+    width: 100%;
+  }
+</style>
 <script>
+import ShopService from '@/services/ShopService'
  export default {
    data(){
      return{
@@ -313,103 +240,87 @@
           { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
         ],
-        product_items: [
-          { 
-            productID: '1',
-            productPrice: '50',
-            productName: 'Chocolate Cake',
-            productDesc: 'Chocolate cake covered with chocolate cream',
-            productRating: '4',
-            productCategory: 'Cake',
-            productPicture: 'https://static.toiimg.com/thumb/53096885.cms?width=1200&height=900'
-          },
-          { 
-            productID: '2',
-            productPrice: '50',
-            productName: 'Vanilla Cake',
-            productDesc: 'Chocolate cake covered with ',
-            productRating: '4',
-            productCategory: 'Cake',
-            productPicture: 'https://static.toiimg.com/thumb/53096885.cms?width=1200&height=900'
-          },
-          { 
-            productID: '3',
-            productPrice: '50',
-            productName: 'Chocolate Cake',
-            productDesc: 'Chocolate cake covered with ',
-            productRating: '4',
-            productCategory: 'Cake',
-            productPicture: 'https://static.toiimg.com/thumb/53096885.cms?width=1200&height=900'
-          },
-          { 
-            productID: '4',
-            productPrice: '50',
-            productName: 'Chocolate Cake',
-            productDesc: 'Chocolate cake covered with ',
-            productRating: '4',
-            productCategory: 'Cake',
-            productPicture: 'https://static.toiimg.com/thumb/53096885.cms?width=1200&height=900'
-          },
-          { 
-            productID: '1',
-            productPrice: '50',
-            productName: 'Chocolate Cake',
-            productDesc: 'Chocolate cake covered with ',
-            productRating: '4',
-            productCategory: 'Cake',
-            productPicture: 'https://static.toiimg.com/thumb/53096885.cms?width=1200&height=900'
-          },
+        product_items: [],
+        range: [0, 10000],
+        select:'Recommended',
+        options: [
+            'Default',
+            'Recommended',
+            'Price: Low to High',
+            'Price: High to Low',
         ],
-        itemsPerPageArray: [4, 8, 12],
-        search: '',
-        filter: {},
-        sortDesc: false,
-        page: 1,
-        itemsPerPage: 4,
-        sortBy: 'Name',
-        keys: [
-          'Name',
-          'Price',
-          'Rating',
-          'Category'
-        ],
+        page:1,
+        min:0,
+        max:10000,
+        items: [],
+        searchQuery: null,
+        sortedProduct: [],
+        filterKey:'',
+        
 
      }
    },
+   async mounted (){
+        const response = (await ShopService.getAllProduct())
+        this.product_items = response.data
+        // console.log(response.data)
+        const response2 = (await ShopService.getItemCategory())
+        // this.items = response2.data
+        for(let i=0; i<response2.data.length; i++){
+          this.items.push(response2.data[i])
+          // console.log(response2.data[i])
+        }
+        
+        
+  },
    computed:{
-     numberOfPages () {
-        return Math.ceil(this.product_items.length / this.itemsPerPage)
-      },
-      filteredKeys () {
-        return this.keys.filter(key => key !== 'Name')
-      },
+     sortedArray(){
+       if(this.searchQuery){
+      return this.product_items.filter((item)=>{
+        return this.searchQuery.toLowerCase().split(' ').every(v => item.product_name.toLowerCase().includes(v))
+      })
+      }else if(this.select=="Price: Low to High"){
+        return this.product_items.filter(() => true).sort((a, b) => a.product_price - b.product_price );
+      }else if(this.select=="Price: High to Low"){
+        return this.product_items.filter(() => true).sort((a, b) => b.product_price - a.product_price );
+      }else if(this.select=="Price: High to Low"){
+        return this.product_items;
+      }else if(this.filterKey){
+        const result = this.product_items.filter((item)=>item.product_category.toLowerCase() == this.filterKey.toLowerCase())
+        console.log(result)
+        return this.product_items.filter((item)=> item.product_category.toLowerCase() == this.filterKey.toLowerCase())
+      }else{
+        return this.product_items;
+      }
+     }
+    },
+    
+   watch:{
+     
    },
    //sample method
    methods:{
-     addTask(){
-       let newTask = {
-         id: Date.now(),
-         title: this.newTaskTitle,
-         done: false
-       }
-       this.tasks.push(newTask);
-       this.newTaskTitle = ''
-     },
-     goToProduct(id){
-       console.log("You clicked on" + id)
+
+     stringToNumber(number){
+       let num = parseInt(number)
+       return num
      },
 
-     nextPage () {
-        if (this.page + 1 <= this.numberOfPages) this.page += 1
-      },
-      formerPage () {
-        if (this.page - 1 >= 1) this.page -= 1
-      },
-      updateItemsPerPage (number) {
-        this.itemsPerPage = number
-      },
+     printSelect(){
+       console.log(this.select)
+     },
+     
+     goToProductPage(productID){
+      let product_path = '/product/'+productID
+      this.$router.push({ path: product_path})
+    },
 
-      logout(){
+    filtered(category){
+      this.filterKey =category
+      console.log(this.filterKey)
+    },
+
+    logout(){
        console.log("Logout")
         this.$store.dispatch('setToken', null)
         this.$store.dispatch('setUser', null)

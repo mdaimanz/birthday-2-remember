@@ -96,16 +96,10 @@
         Welcome back!
       </v-card-title>
     </v-row>
-    <v-card-text>     
-    </v-card-text>
-
-    
-      <validation-observer
-    
-    
-    ref="observer"
-    v-slot="{ invalid }"
-  >
+    <validation-observer
+      ref="observer"
+      v-slot="{ invalid }"
+    >
     <form class="px-10" @submit.prevent="submit">
       <validation-provider
         v-slot="{ errors }"

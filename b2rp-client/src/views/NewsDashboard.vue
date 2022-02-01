@@ -260,13 +260,12 @@ export default {
         news_items:[],
         headers: [
           {
-            text: 'News ID',
+            text: 'News Title',
             align: 'start',
-            sortable: true,
-            value: 'news_id',
+            sortable: false,
+            value: 'news_title',
           },
-          { text: 'News Title', value: 'news_title' ,sortable: false },
-          { text: 'Post Date', value: 'post_date', sortable: false },
+          { text: 'Post Date', value: 'post_date', sortable: true },
           { text: 'Actions', value: 'actions', sortable: false },
         ],
         editedIndex: -1,

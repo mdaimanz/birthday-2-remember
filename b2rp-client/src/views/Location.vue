@@ -118,7 +118,7 @@
     </v-main>
 
 
-    <v-footer padless class="mt-10">
+    <v-footer bottom padless class="mt-10">
     <v-col
       class="cyan lighten-3 white--text text-center"
       cols="12"
@@ -148,14 +148,7 @@
           },
         ],
         location_items:[
-         {
-           location_id:'1',
-           title: 'Haji Bakery Sdn Bhd, Bandar Tasik Puteri',
-           address_1: 'No 11-G, Green Valley Park, Jalan Hijau 5/1,',
-           address_2: 'Bandar Tasik Puteri, 48000 Rawang, Selangor',
-           status: 'Open',
-           picture_path: 'https://lh5.googleusercontent.com/p/AF1QipM4QgvJzhX9pMs-17_TXTSmjAtIPLk5gEPaAKfc=w1080-k-no',
-         },
+         
          {
            location_id:'2',
            title: 'Haji Bakery Sdn Bhd, Bandar Country Home',
@@ -170,7 +163,15 @@
            address_1: 'No 55-G, Seksyen BB5, Jalan Adenium 2g/6,',
            address_2: '48300 Rawang, Selangor',
            status: 'Open',
-           picture_path: 'https://cdn1.my.orstatic.com/userphoto/doorphoto/2/1LV/00BFLO8342C270683ACDC6px.jpg',
+           picture_path: 'https://lh5.googleusercontent.com/p/AF1QipMAObX2ioh1mnGNh9dP0u_jXpWD4PhyTYOvN7gc=w1080-k-no',
+         },
+         {
+           location_id:'1',
+           title: 'Haji Bakery Sdn Bhd, Bandar Tasik Puteri',
+           address_1: 'No 11-G, Green Valley Park, Jalan Hijau 5/1,',
+           address_2: 'Bandar Tasik Puteri, 48000 Rawang, Selangor',
+           status: 'Open',
+           picture_path: 'https://assets.ciku.my/listing/articles/IMG_20200814_103539.jpg',
          },
          
          ]
