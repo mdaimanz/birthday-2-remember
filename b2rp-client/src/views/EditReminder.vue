@@ -238,6 +238,9 @@ import ReminderService from '@/services/ReminderService'
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
           { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
           { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
+          { title: 'Sales', icon: 'mdi-sale', path: '/sales' },
+          { title: 'Product', icon: 'mdi-package-variant', path: '/product' },
+          { title: 'Promotion', icon: 'mdi-ticket-percent', path: '/promotion' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
           
         ],
