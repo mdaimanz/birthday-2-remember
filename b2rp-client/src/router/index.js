@@ -13,6 +13,10 @@ import Shop from '../views/Shop.vue'
 import EditReminder from '../views/EditReminder.vue'
 import NewsTemplate from '../views/NewsTemplate.vue'
 import NewsDashboard from '../views/NewsDashboard.vue'
+import Sales from '../views/Sales.vue'
+import VendorSetting from '../views/VendorSetting.vue'
+import Product from '../views/Product.vue'
+import Promotion from '../views/Promotion.vue'
 
 
 
@@ -92,7 +96,26 @@ const routes = [
     name: 'NewsDashboard',
     component: NewsDashboard
   },
-  
+  {
+    path: '/sales',
+    name: 'Sales',
+    component: Sales
+  },
+  {
+    path: '/vendorsetting',
+    name: 'VendorSetting',
+    component: VendorSetting
+  },
+  {
+    path: '/product',
+    name: 'Product',
+    component: Product
+  },
+  {
+    path: '/promotion',
+    name: 'Promotion',
+    component: Promotion
+  },
 ]
 
 const router = new VueRouter({
