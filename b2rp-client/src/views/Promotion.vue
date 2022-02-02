@@ -41,7 +41,7 @@
 
     <v-app-bar app class="cyan lighten-3 white--text">
 
-      <v-toolbar-title>Sales</v-toolbar-title>
+      <v-toolbar-title>Promotions</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -71,7 +71,7 @@
 
     <v-main>
       <v-container fluid class="mx-auto">
-        <v-row justify="center">
+    <v-row justify="center">
             <v-alert
             dense
             text
@@ -95,18 +95,17 @@
             </v-alert>
         </v-row>
         <v-row class="text-center" justify="center">
-
     <v-data-table
     :headers="headers"
-    :items="sales"
-    sort-by="sales_date"
+    :items="promotion"
+    sort-by="name"
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Sales List</v-toolbar-title>
+        <v-toolbar-title>Promotion List</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -125,7 +124,7 @@
               v-bind="attrs"
               v-on="on"
             >
-              New Sale
+            New Promotion
             </v-btn>
           </template>
           <v-card>
@@ -142,9 +141,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.sales_date"
-                      label="Date"
-                      
+                      v-model="editedItem.promo_name"
+                      label="Name"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -153,9 +151,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.modal"
-                      label="Modal"
-                      
+                      v-model="editedItem.promo_description"
+                      label="Description"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -164,9 +161,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.product"
-                      label="Product"
-                      
+                      v-model="editedItem.promo_code"
+                      label="Promotion Code"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -175,9 +171,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.price_per_product"
-                      label="Price Per Product"
-                      
+                      v-model="editedItem.promo_rate"
+                      label="Rate"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -186,9 +181,18 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.quantity_sold"
-                      label="Quantity Sold"
-                      
+                      v-model="editedItem.start_date"
+                      label="Start Date"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.end_date"
+                      label="End Date"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -251,6 +255,7 @@
       </v-btn>
     </template>
   </v-data-table>
+    
     </v-row>
 
         
@@ -274,7 +279,7 @@
 </template>
 
 <script>
-import SalesService from '@/services/SalesService'
+import PromotionService from '@/services/PromotionService'
 
  export default {
    data(){
@@ -294,37 +299,38 @@ import SalesService from '@/services/SalesService'
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
           { title: 'Logout', icon: 'mdi-logout', path: '/logout' },
         ],
-        
-        sales: [],
+
+        promotion: [],
         headers: [
-          {text: 'Date', value: 'sales_date',},
-          { text: 'Modal', value: 'modal', sortable: false},
-          { text: 'Product', value: 'product', sortable: false},
-          { text: 'Price Per Product', value: 'price_per_product', sortable: false},
-          { text: 'Quantity Sold', value: 'quantity_sold', sortable: false},
+          {text: 'Name', align: 'start', value: 'promo_name',},
+          { text: 'Description', value: 'promo_description', sortable: false},
+          { text: 'Promotion Code', value: 'promo_code', sortable: false},
+          { text: 'Rate', value: 'promo_rate', sortable: false},
+          { text: 'Start Date', value: 'start_date', sortable: false},
+          { text: 'End Date', value: 'end_date', sortable: false},
           { text: 'Actions', value: 'actions', sortable: false },
         ],
 
         editedIndex: -1,
         editedItem: {
-          sales_date: '',
-          modal: '',
-          product: '',
-          price_per_product: '',
-          quantity_sold: ''
+          promo_name: '',
+          promo_description: '',
+          promo_code: '',
+          promo_rate: '',
+          start_date: '',
+          end_date:''
         },
      }
    },
-
-    async mounted (){
-        const response = (await SalesService.getAllSales(this.$store.state.user.id))
-        this.sales = response.data
+   async mounted (){
+        const response = (await PromotionService.getAllPromotion(this.$store.state.user.id))
+        this.promotion = response.data
         console.log(response.data)
         console.log(this.$store.state.user.id)
     },
    computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Sales' : 'Edit Sales'
+        return this.editedIndex === -1 ? 'New Promotion' : 'Edit Promotion'
       },
     },
 
@@ -336,35 +342,35 @@ import SalesService from '@/services/SalesService'
         val || this.closeDelete()
       },
     },
-   
+
    methods:{
      async initialize(){
-       const response = (await SalesService.getAllSales(this.$store.state.user.id))
-        this.sales = response.data
+       const response = (await PromotionService.getAllPromotion(this.$store.state.user.id))
+        this.promotion = response.data
      },
      editItem (item) {
-        this.editedIndex = this.sales.indexOf(item)
+        this.editedIndex = this.promotion.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        this.editedIndex = this.sales.indexOf(item)
+        this.editedIndex = this.promotion.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
       async deleteItemConfirm () {
-        let sales_id = this.sales[this.editedIndex].sales_id
+        let promo_id = this.promotion[this.editedIndex].promo_id
         let vendor_id = 1
-        console.log(sales_id)
+        console.log(promo_id)
         try{
-            const response = (await SalesService.deleteSales(vendor_id,sales_id))
+            const response = (await PromotionService.deletePromotion(vendor_id,promo_id))
             console.log(response.data)
             if(response.status==200){
                 this.success_msg = response.data.message
             }
-            this.sales.splice(this.editedIndex, 1)
+            this.promotion.splice(this.editedIndex, 1)
             this.initialize()
         }catch(error){
             console.log(error.response.data.error)
@@ -391,16 +397,16 @@ import SalesService from '@/services/SalesService'
 
       async save () {
         if (this.editedIndex > -1) {
-            let sales_id = this.sales[this.editedIndex].sales_id
+            let promo_id = this.promotion[this.editedIndex].promo_id
             console.log("Index: "+this.editedIndex)
-            console.log("Sales ID: "+sales_id)
+            console.log("Promo ID: "+promo_id)
             try{
-                const response = (await SalesService.editSales(this.$store.state.user.id,sales_id,this.editedItem))
-                console.log(response.data)
+                const response = (await PromotionService.editPromotion(this.$store.state.user.id,promo_id,this.editedItem))
+                console.log(response)
                 if(response.status==200){
                     this.success_msg = response.data.message
                 }
-                Object.assign(this.sales[this.editedIndex], this.editedItem)
+                Object.assign(this.promotion[this.editedIndex], this.editedItem)
                 this.initialize()
             }catch(error){
                 console.log(error.response.data.error)
@@ -409,20 +415,22 @@ import SalesService from '@/services/SalesService'
           
         } else {
             try{
-                const response = (await SalesService.addSales(this.$store.state.user.id,this.editedItem))
-                console.log(response.data)
+                const response = (await PromotionService.addPromotion(this.$store.state.user.id,this.editedItem))
+                console.log(this.editedItem)
+                console.log("acap",response)
                 if(response.status==200){
                     this.success_msg = response.data.message
                 }
-                this.sales.push(this.editedItem)
+                this.promotion.push(this.editedItem)
                 this.initialize()
             }catch(error){
-                console.log(error.response.data.error)
+              console.log(error)
+                // console.log(error.response.data.error)
                 this.error_msg = "Database error"
             }
         }
         this.close()
-      },          
+      },     
    }
  }
     

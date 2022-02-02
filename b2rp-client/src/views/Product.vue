@@ -41,7 +41,7 @@
 
     <v-app-bar app class="cyan lighten-3 white--text">
 
-      <v-toolbar-title>Sales</v-toolbar-title>
+      <v-toolbar-title>Products</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -71,7 +71,7 @@
 
     <v-main>
       <v-container fluid class="mx-auto">
-        <v-row justify="center">
+    <v-row justify="center">
             <v-alert
             dense
             text
@@ -95,18 +95,18 @@
             </v-alert>
         </v-row>
         <v-row class="text-center" justify="center">
-
     <v-data-table
+    id = "table"
     :headers="headers"
-    :items="sales"
-    sort-by="sales_date"
+    :items="product"
+    sort-by="name"
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Sales List</v-toolbar-title>
+        <v-toolbar-title>Product List</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -121,11 +121,20 @@
             <v-btn
               color="primary"
               dark
+              class="mb-2 mx-2"
+              v-bind="attrs"
+              @click="generatePDF"
+            >
+            Print PDF
+            </v-btn>
+            <v-btn
+              color="primary"
+              dark
               class="mb-2"
               v-bind="attrs"
               v-on="on"
             >
-              New Sale
+            New Product
             </v-btn>
           </template>
           <v-card>
@@ -142,9 +151,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.sales_date"
-                      label="Date"
-                      
+                      v-model="editedItem.product_name"
+                      label="Name"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -153,9 +161,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.modal"
-                      label="Modal"
-                      
+                      v-model="editedItem.product_price"
+                      label="Price"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -164,31 +171,41 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.product"
-                      label="Product"
-                      
+                      v-model="editedItem.product_description"
+                      label="Description"
                     ></v-text-field>
                   </v-col>
+                  
                   <v-col
                     cols="12"
                     sm="6"
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.price_per_product"
-                      label="Price Per Product"
-                      
+                      v-model="editedItem.product_category"
+                      label="Category"
                     ></v-text-field>
                   </v-col>
+
                   <v-col
                     cols="12"
                     sm="6"
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.quantity_sold"
-                      label="Quantity Sold"
-                      
+                      v-model="editedItem.product_quantity"
+                      label="Quantity"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.image_path"
+                      label="Image"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -251,6 +268,7 @@
       </v-btn>
     </template>
   </v-data-table>
+    
     </v-row>
 
         
@@ -273,8 +291,11 @@
   </div>
 </template>
 
+
 <script>
-import SalesService from '@/services/SalesService'
+import ProductService from '@/services/ProductService'
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable' 
 
  export default {
    data(){
@@ -294,37 +315,39 @@ import SalesService from '@/services/SalesService'
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
           { title: 'Logout', icon: 'mdi-logout', path: '/logout' },
         ],
-        
-        sales: [],
+
+        product: [],
         headers: [
-          {text: 'Date', value: 'sales_date',},
-          { text: 'Modal', value: 'modal', sortable: false},
-          { text: 'Product', value: 'product', sortable: false},
-          { text: 'Price Per Product', value: 'price_per_product', sortable: false},
-          { text: 'Quantity Sold', value: 'quantity_sold', sortable: false},
+          {text: 'Name', align: 'start', value: 'product_name',},
+          { text: 'Price', value: 'product_price', sortable: false},
+          { text: 'Description', value: 'product_description', sortable: false},
+          { text: 'Rating', value: 'product_rating', sortable: false},
+          { text: 'Category', value: 'product_category', sortable: false},
+          { text: 'Quantity', value: 'product_quantity', sortable: false},
+          { text: 'Image', value: 'image_path', sortable: false},
           { text: 'Actions', value: 'actions', sortable: false },
         ],
 
         editedIndex: -1,
         editedItem: {
-          sales_date: '',
-          modal: '',
-          product: '',
-          price_per_product: '',
-          quantity_sold: ''
+          product_name: '',
+          product_price: '',
+          product_description: '',
+          product_category: '',
+          product_quantity: '',
+          image_path: ''
         },
      }
    },
-
-    async mounted (){
-        const response = (await SalesService.getAllSales(this.$store.state.user.id))
-        this.sales = response.data
+   async mounted (){
+        const response = (await ProductService.getAllProduct(this.$store.state.user.id))
+        this.product = response.data
         console.log(response.data)
         console.log(this.$store.state.user.id)
     },
    computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Sales' : 'Edit Sales'
+        return this.editedIndex === -1 ? 'New Product' : 'Edit Product'
       },
     },
 
@@ -336,35 +359,35 @@ import SalesService from '@/services/SalesService'
         val || this.closeDelete()
       },
     },
-   
+
    methods:{
      async initialize(){
-       const response = (await SalesService.getAllSales(this.$store.state.user.id))
-        this.sales = response.data
+       const response = (await ProductService.getAllProduct(this.$store.state.user.id))
+        this.product = response.data
      },
      editItem (item) {
-        this.editedIndex = this.sales.indexOf(item)
+        this.editedIndex = this.product.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        this.editedIndex = this.sales.indexOf(item)
+        this.editedIndex = this.product.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
       async deleteItemConfirm () {
-        let sales_id = this.sales[this.editedIndex].sales_id
+        let product_id = this.product[this.editedIndex].product_id
         let vendor_id = 1
-        console.log(sales_id)
+        console.log(product_id)
         try{
-            const response = (await SalesService.deleteSales(vendor_id,sales_id))
+            const response = (await ProductService.deleteProduct(vendor_id,product_id))
             console.log(response.data)
             if(response.status==200){
                 this.success_msg = response.data.message
             }
-            this.sales.splice(this.editedIndex, 1)
+            this.product.splice(this.editedIndex, 1)
             this.initialize()
         }catch(error){
             console.log(error.response.data.error)
@@ -391,16 +414,16 @@ import SalesService from '@/services/SalesService'
 
       async save () {
         if (this.editedIndex > -1) {
-            let sales_id = this.sales[this.editedIndex].sales_id
+            let product_id = this.product[this.editedIndex].product_id
             console.log("Index: "+this.editedIndex)
-            console.log("Sales ID: "+sales_id)
+            console.log("Product ID: "+product_id)
             try{
-                const response = (await SalesService.editSales(this.$store.state.user.id,sales_id,this.editedItem))
+                const response = (await ProductService.editProduct(this.$store.state.user.id,product_id,this.editedItem))
                 console.log(response.data)
                 if(response.status==200){
                     this.success_msg = response.data.message
                 }
-                Object.assign(this.sales[this.editedIndex], this.editedItem)
+                Object.assign(this.product[this.editedIndex], this.editedItem)
                 this.initialize()
             }catch(error){
                 console.log(error.response.data.error)
@@ -409,12 +432,12 @@ import SalesService from '@/services/SalesService'
           
         } else {
             try{
-                const response = (await SalesService.addSales(this.$store.state.user.id,this.editedItem))
+                const response = (await ProductService.addProduct(this.$store.state.user.id,this.editedItem))
                 console.log(response.data)
                 if(response.status==200){
                     this.success_msg = response.data.message
                 }
-                this.sales.push(this.editedItem)
+                this.product.push(this.editedItem)
                 this.initialize()
             }catch(error){
                 console.log(error.response.data.error)
@@ -422,8 +445,35 @@ import SalesService from '@/services/SalesService'
             }
         }
         this.close()
-      },          
-   }
- }
+      },
+      async generatePDF(){
+        try{
+          const response = (await ProductService.getAllProduct(this.$store.state.user.id))
+          const doc = new jsPDF();
+
+          doc.setFontSize(20);
+          doc.setTextColor(40);
+          doc.text("Sales Report", 10, 10)
+          doc.autoTable({ 
+              columns: [
+                { header: 'Name', dataKey: 'product_name'},
+                { header: 'Price', dataKey: 'product_price'},
+                { header: 'Description', dataKey: 'product_description'},
+                { header: 'Rating', dataKey: 'product_rating'},
+                { header: 'Category', dataKey: 'product_category'},
+                { header: 'Quantity', dataKey: 'product_quantity'},
+                { header: 'Image', dataKey: 'image_path'},
+              ],
+              body: response.data,
+          });
+
+          doc.save("stock report.pdf")
+
+        }catch(error){
+          console.log(error)
+        }
+      }  
+    }
+  }
     
 </script>
