@@ -12,15 +12,16 @@ import NewsAndPromo from '../views/NewsAndPromo.vue'
 import Shop from '../views/Shop.vue'
 import EditReminder from '../views/EditReminder.vue'
 import NewsTemplate from '../views/NewsTemplate.vue'
+import NewsTemplateUser from '../views/NewsTemplateUser.vue'
 import NewsDashboard from '../views/NewsDashboard.vue'
-import Sales from '../views/Sales.vue'
-import VendorSetting from '../views/VendorSetting.vue'
-import Product from '../views/Product.vue'
-import Promotion from '../views/Promotion.vue'
-
-
+import ProductTemplate from '../views/ProductTemplate.vue'
+import Cart from '../views/Cart.vue'
+import CustOrder from '../views/CustOrder.vue'
+import Checkout from '../views/Checkout.vue'
+import PaymentSuccess from '../views/PaymentSuccess.vue'
 
 Vue.use(VueRouter)
+
 
 const routes = [
   {
@@ -92,29 +93,39 @@ const routes = [
     component: NewsTemplate
   },
   {
+    path: '/newsuser/:newsId',
+    name: 'NewsTemplateUser',
+    component: NewsTemplateUser
+  },
+  {
     path: '/newsdashboard',
     name: 'NewsDashboard',
     component: NewsDashboard
   },
   {
-    path: '/sales',
-    name: 'Sales',
-    component: Sales
+    path: '/product/:productsId',
+    name: 'ProductTemplate',
+    component: ProductTemplate
   },
   {
-    path: '/vendorsetting',
-    name: 'VendorSetting',
-    component: VendorSetting
+    path: '/cart',
+    name: 'Cart',
+    component: Cart
   },
   {
-    path: '/product',
-    name: 'Product',
-    component: Product
+    path: '/custorder',
+    name: 'CustOrder',
+    component: CustOrder
   },
   {
-    path: '/promotion',
-    name: 'Promotion',
-    component: Promotion
+    path: '/checkout',
+    name: 'Checkout',
+    component: Checkout
+  },
+  {
+    path: '/paymentsuccess',
+    name: 'PaymentSuccess',
+    component: PaymentSuccess
   },
 ]
 
@@ -125,3 +136,4 @@ const router = new VueRouter({
 })
 
 export default router
+
