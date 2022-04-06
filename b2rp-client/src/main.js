@@ -7,8 +7,6 @@ import vuetify from './plugins/vuetify'
 import { sync } from 'vuex-router-sync'
 import {loadStripe} from '@stripe/stripe-js'
 import store from '@/store/store'
-import { jsPDF } from 'jspdf'
-import 'jspdf-autotable' 
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
@@ -20,6 +18,5 @@ new Vue({
   vuetify,
   store,
   loadStripe,
-  jsPDF,
   render: h => h(App)
 }).$mount('#app')
