@@ -10,4 +10,13 @@ export default {
     getName(userId){
         return Api().get('getName/'+userId)
     },
+    getUserInfo(userId){
+        return Api().get('getUserInfo/'+userId)
+    },
+    editProfile(userId, info){
+        return Api().post('editProfile/'+userId, info)
+    },
+    changePassword(userId, pass){
+        return Api().post('changePassword/'+userId, pass)
+    },
 }

@@ -12,6 +12,10 @@ export default{
     getProduct(productId){
         return Api().get('getProduct/'+productId)
     },
+
+    getUserRecommendation(userId){
+        return Api().get('getUserRecommendation/'+userId)
+    },
     
     getReview(productId){
         return Api().get('getReview/'+productId)
@@ -31,7 +35,11 @@ export default{
 
     editProductQuantity(userId, productId, quantity){
         return Api().post('editProductQuantity/'+userId+'/'+productId, quantity)
-    }
+    },
+
+    
+
+    
 
 
 

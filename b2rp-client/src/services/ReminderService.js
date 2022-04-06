@@ -20,6 +20,6 @@ export default{
     addReminder(user_id, reminder){
         return Api().post('addReminder/'+user_id, reminder)
     }
-
-
 }
+
+
