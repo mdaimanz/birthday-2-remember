@@ -12,8 +12,6 @@
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "stripe": "^8.200.0",
-    "jspdf": "^2.5.1",
-    "jspdf-autotable": "^3.5.23",
     "vee-validate": "^3.4.13",
     "vue": "^2.6.11",
     "vue-axios": "^3.4.0",
