@@ -99,7 +99,7 @@
         ></v-img>
         </v-list-item>
 
-        <v-card-actions>
+        <!-- <v-card-actions>
           <v-btn
             class="cyan lighten-2 white--text"
             outlined
@@ -109,7 +109,7 @@
           >
             {{item.status}} 
           </v-btn>
-        </v-card-actions>
+        </v-card-actions> -->
       </v-card>
     </v-row>
       
@@ -149,22 +149,6 @@
         ],
         location_items:[
          
-         {
-           location_id:'2',
-           title: 'Haji Bakery Sdn Bhd, Bandar Country Home',
-           address_1: 'No 20, Jalan Desa 1/1,',
-           address_2: 'Bandar Country Homes, 48000 Rawang, Selangor',
-           status: 'Open',
-           picture_path: 'https://lh5.googleusercontent.com/p/AF1QipMAObX2ioh1mnGNh9dP0u_jXpWD4PhyTYOvN7gc=w1080-k-no',
-         },
-         {
-           location_id:'3',
-           title: 'Haji Bakery Sdn Bhd, Rawang',
-           address_1: 'No 55-G, Seksyen BB5, Jalan Adenium 2g/6,',
-           address_2: '48300 Rawang, Selangor',
-           status: 'Open',
-           picture_path: 'https://lh5.googleusercontent.com/p/AF1QipMAObX2ioh1mnGNh9dP0u_jXpWD4PhyTYOvN7gc=w1080-k-no',
-         },
          {
            location_id:'1',
            title: 'Haji Bakery Sdn Bhd, Bandar Tasik Puteri',

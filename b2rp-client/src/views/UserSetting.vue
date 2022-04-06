@@ -9,7 +9,7 @@
             Birthday2Remember
           </v-list-item-title>
           <v-list-item-subtitle>
-            Hi user!
+            Hi {{$store.state.user.name}}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -45,31 +45,45 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-badge
-        content="6"
-        color="green"
-        overlap
-      >
-        <v-icon>
-          mdi-bell
-        </v-icon>
-      </v-badge>
-
-      </v-btn>
-      
-
-      <v-btn icon>
-        <v-icon>mdi-account-cog</v-icon>
-      </v-btn>
-
-      <v-btn icon @click="logout">
+      <v-btn icon v-if="$store.state.isUserLoggedIn" @click="logout">
         <v-icon>mdi-logout</v-icon>
+      </v-btn>
+
+      <v-btn
+      v-if="!$store.state.isUserLoggedIn"
+      class="mr-2 cyan--text"
+      color="white"
+      to="/login"
+      >
+      Login
       </v-btn>
     </v-app-bar>
 
     <v-main>
       <v-container fluid class="mx-auto">
+        <v-row justify="center">
+            <v-alert
+            dense
+            text
+            class="ma-5"
+            type="success"
+            v-if="success_msg"
+            >
+            {{success_msg}}
+            </v-alert>
+        </v-row>
+        <v-row justify="center">
+            <!-- error alert -->
+            <v-alert
+            dense
+            outlined
+            class="ma-5"
+            type="error"
+            v-if="error_msg"
+            >
+            {{error_msg}}
+            </v-alert>
+        </v-row>
         <v-row class="text-center">
           <v-card
           class="mx-auto"
@@ -95,15 +109,15 @@
         <v-icon>mdi-key-change</v-icon>
       </v-tab>
 
-      <v-tab href="#tab_3">
+      <!-- <v-tab href="#tab_3">
         Reminder options
         <v-icon>mdi-bell-ring</v-icon>
-      </v-tab>
+      </v-tab> -->
 
-      <v-tab href="#tab_4">
+      <!-- <v-tab href="#tab_4">
         Delete account
         <v-icon>mdi-account-alert</v-icon>
-      </v-tab>
+      </v-tab> -->
     </v-tabs>
 
     <v-tabs-items v-model="tab">
@@ -126,7 +140,7 @@
               <v-col>
                 <v-card-text>
                   <div class="title">
-                    <p>User ID: <span class="blue-grey lighten-5 ma-5 rounded-r-xl">{{id_num}}</span></p>
+                    <p>User ID: <span class="lighten-5 ma-5 rounded-r-xl">{{user_info[0].id}}</span></p>
                   </div>
                 </v-card-text>
               </v-col>
@@ -144,7 +158,7 @@
                     <p>Full Name</p>
                   </div>
                   <div class="subtitle-1 blue-grey lighten-5 rounded-lg">
-                    <p>{{name}}</p>
+                    <p>{{user_info[0].name}}</p>
                   </div>
                 </v-card-text>
               </v-col>
@@ -155,7 +169,7 @@
                     <p>Email Address</p>
                   </div>
                   <div class="subtitle-1 blue-grey lighten-5 rounded-lg">
-                    <p>{{email}}</p>
+                    <p>{{user_info[0].email}}</p>
                   </div>
                 </v-card-text>
               </v-col>
@@ -169,7 +183,7 @@
                     <p>Phone Number</p>
                   </div>
                   <div class="subtitle-1 blue-grey lighten-5 rounded-lg">
-                    <p>{{phone_num}}</p>
+                    <p>{{user_info[0].phone_num}}</p>
                   </div>
                 </v-card-text>
               </v-col>
@@ -192,7 +206,7 @@
               <v-card-actions>
                 <v-btn
                   color="cyan darken-1 white--text"
-                  @click="EditProfile()"
+                  @click="openEditProfile"
                 >
                   Edit Profile
                 </v-btn>
@@ -219,7 +233,7 @@
               <v-card-actions>
                 <v-btn
                   color="cyan darken-1 white--text"
-                  @click="ChangePassword()"
+                  @click="openChangePassword"
                 >
                   Change Password
                 </v-btn>
@@ -298,6 +312,163 @@
     </v-tabs-items>
   </v-card>
         </v-row>
+
+        <v-row justify="center">
+    <v-dialog
+      v-model="dialogProfile"
+      persistent
+      max-width="600px"
+    >
+    <validation-observer
+              ref="observer"
+              v-slot="{ invalid }"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Edit Information</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            
+            <v-row>
+              
+              <v-col cols="12">
+                <validation-provider
+                  v-slot="{ errors }"
+                  name="Full Name"
+                  rules="required"
+                >
+                <v-text-field
+                 :error-messages="errors"
+                  v-model="user_info[0].name"
+                  label="Full Name*"
+                  required
+                ></v-text-field>
+                </validation-provider>
+              </v-col>
+              <v-col cols="12">
+                <validation-provider
+                  v-slot="{ errors }"
+                  name="Phone number"
+                  :rules="{
+                    required: true,
+                    regex: '^(60)'
+                  }"
+                >
+                <v-text-field
+                  v-model="user_info[0].phone_num"
+                  :error-messages="errors"
+                  label="Phone Number*"
+                  required
+                ></v-text-field>
+                </validation-provider>
+              </v-col>
+              
+            </v-row>
+          
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="dialogProfile = false"
+          >
+            Close
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            :disabled="invalid"
+            @click="submitEditProfile"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+      </validation-observer>
+    </v-dialog>
+  </v-row>
+
+  <v-row justify="center">
+    <v-dialog
+      v-model="dialogPassword"
+      persistent
+      max-width="600px"
+    >
+    <validation-observer
+              ref="observer"
+              v-slot="{ invalid }"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Change password</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            
+            <v-row>
+              
+              <v-col cols="12">
+                <validation-provider
+                  v-slot="{ errors }"
+                  name="Password"
+                  rules="required"
+                >
+                <v-text-field
+                 :error-messages="errors"
+                  v-model="password.oldPassword"
+                  label="Old Password*"
+                  type="password"
+                  required
+                ></v-text-field>
+                </validation-provider>
+              </v-col>
+
+              <v-col cols="12">
+                <validation-provider
+                  v-slot="{ errors }"
+                  name="New Password"
+                  rules="required"
+                >
+                <v-text-field
+                 :error-messages="errors"
+                  v-model="password.newPassword"
+                  label="New Password*"
+                  type="password"
+                  required
+                ></v-text-field>
+                </validation-provider>
+              </v-col>
+            </v-row>
+          
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="dialogPassword = false"
+          >
+            Close
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            :disabled="invalid"
+            @click="submitChangePassword"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+      </validation-observer>
+    </v-dialog>
+  </v-row>
       </v-container>
     </v-main>
       <v-footer bottom padless app class="mt-10">
@@ -317,15 +488,53 @@
 </template>
 
 <script>
+import AuthenticationService from '@/services/AuthenticationService'
+import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
+import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+
+setInteractionMode('eager')
+
+  extend('digits', {
+    ...digits,
+    message: '{_field_} needs to be {length} digits. ({_value_})',
+  })
+
+  extend('required', {
+    ...required,
+    message: '{_field_} can not be empty',
+  })
+
+  extend('max', {
+    ...max,
+    message: '{_field_} may not be greater than {length} characters',
+  })
+
+  extend('regex', {
+    ...regex,
+    message: '{_field_} {_value_} format is wrong. (Please use this format: 60-xxxxx xxxx)',
+  })
+
+  extend('email', {
+    ...email,
+    message: 'Email must be valid',
+  })
  export default {
+   components: {
+      ValidationProvider,
+      ValidationObserver,
+    },
    data(){
      return{
+       success_msg: '',
+       error_msg: '',
        tab: "tab_1",
-       id_num: "01",
-       email: "johndoe@gmail.com",
-       name: "John Doe",
-       phone_num: "012-44445062",
-
+       dialogProfile: false,
+       dialogPassword: false,
+       password:{
+         newPassword: null,
+         oldPassword: null,
+       },   
+       user_info: [],
        checkbox1: true,
        checkbox2: false,
        checkbox3: false,
@@ -333,22 +542,55 @@
        dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
-          { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
-          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
+          { title: 'Shop', icon: 'mdi-shopping', path: '/shop' },
+          { title: 'Cart', icon: 'mdi-cart', path: '/cart' },
+          { title: 'Order', icon: 'mdi-bookmark', path: '/custorder' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
         ],
      }
    },
+   async mounted (){
+        const response = (await AuthenticationService.getUserInfo(this.$store.state.user.id))
+        this.user_info = response.data
+        console.log("user_info: ",this.user_info[0])
+      },
    //sample method
    methods:{
-     addTask(){
-       let newTask = {
-         id: Date.now(),
-         title: this.newTaskTitle,
-         done: false
+     async initialize (){
+           const response2 = (await AuthenticationService.getUserInfo(this.$store.state.user.id))
+           this.user_info = response2.data
+      },
+     openEditProfile(){
+       this.dialogProfile= true;
+     },
+     async submitEditProfile(){
+      //  console.log("user_info: ",this.user_info[0])
+       const response3 = (await AuthenticationService.editProfile(this.$store.state.user.id, this.password))
+       console.log(response3)
+       if(response3.status==200){
+         this.success_msg = response3.data.message
+       }else{
+         this.error_msg = "Database error"
        }
-       this.tasks.push(newTask);
-       this.newTaskTitle = ''
+       this.dialogProfile = false
+     },
+     openChangePassword(){
+       this.dialogPassword= true;
+     },
+
+     async submitChangePassword(){
+        console.log("oldPassword", this.password.oldPassword)
+       console.log("newPassword", this.password.newPassword)
+       const response4 = (await AuthenticationService.changePassword(this.$store.state.user.id, this.password))
+       if(response4.status==200){
+         this.success_msg = response4.data.message
+         this.dialogPassword= false;
+       }else{
+         this.error_msg = response4.data.error
+         this.dialogPassword= false;
+       }
+      
+       
      },
 
      logout(){

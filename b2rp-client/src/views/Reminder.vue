@@ -44,27 +44,19 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-badge
-        content="6"
-        color="green"
-        overlap
-      >
-        <v-icon>
-          mdi-bell
-        </v-icon>
-      </v-badge>
-
-      </v-btn>
       
-      <v-btn icon>
-        <v-icon>mdi-account-cog</v-icon>
-      </v-btn>
-
-      <v-btn icon @click="logout">
+      <v-btn icon v-if="$store.state.isUserLoggedIn" @click="logout">
         <v-icon>mdi-logout</v-icon>
       </v-btn>
 
+      <v-btn
+      v-if="!$store.state.isUserLoggedIn"
+      class="mr-2 cyan--text"
+      color="white"
+      to="/login"
+      >
+      Login
+      </v-btn>
       
     </v-app-bar>
 
@@ -159,6 +151,36 @@
                       :rules="rules"
                     ></v-text-field>
                 </v-row>
+                <!-- <v-row>
+                    <div>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="editedItem.remind_date"
+                            label="Remind date"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="editedItem.remind_date"
+                          :active-picker.sync="activePicker"
+                          
+                          min="2022-02-07"
+                          @change="saveDate(this.editedItem.remind_date)"
+                        ></v-date-picker>
+                      </v-menu>
+                    </div>
+                </v-row> -->
                 <v-row>
                     <v-text-field
                       v-model="editedItem.remind_time"
@@ -260,9 +282,11 @@ export default {
        dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
-          { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
-          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
+          { title: 'Shop', icon: 'mdi-shopping', path: '/shop' },
+          { title: 'Cart', icon: 'mdi-cart', path: '/cart' },
+          { title: 'Order', icon: 'mdi-bookmark', path: '/custorder' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
+
         ],
         reminders_items:[],
         headers: [
@@ -289,6 +313,9 @@ export default {
         value => !!value || 'Required.',
         value => (value && value.length >= 3) || 'Min 3 characters',
         ],
+
+        // activePicker: null,
+        // menu: false,
         
         
         
@@ -314,9 +341,16 @@ export default {
       dialogDelete (val) {
         val || this.closeDelete()
       },
+      // menu (val) {
+      //   val && setTimeout(() => (this.activePicker = 'YEAR'))
+      // },
     },
 
    methods:{
+      // saveDate () {
+      //   console.log("Remind Date: ", this.editedItem.remind_date)
+      //   this.$refs.menu.save(this.editedItem.remind_date)
+      // },
        async initialize (){
            const response = (await ReminderService.getAllReminder(this.$store.state.user.id))
            this.reminders_items = response.data

@@ -2,14 +2,14 @@
   <div class="">
     <v-app>
     
-    <v-navigation-drawer app expand-on-hover>
+    <v-navigation-drawer app expand-on-hover v-if="$store.state.isUserLoggedIn">
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="text-h6">
             Birthday2Remember
           </v-list-item-title>
           <v-list-item-subtitle>
-            Hi user!
+            Hi {{$store.state.user.name}}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -43,28 +43,19 @@
 
       <v-toolbar-title>Home</v-toolbar-title>
 
-      <v-spacer></v-spacer>
-
-      <v-btn icon>
-        <v-badge
-        content="6"
-        color="green"
-        overlap
-      >
-        <v-icon>
-          mdi-bell
-        </v-icon>
-      </v-badge>
-
-      </v-btn>
-      
-
-      <v-btn icon>
-        <v-icon>mdi-account-cog</v-icon>
-      </v-btn>
-
+      <v-spacer></v-spacer>      
+      <!-- copy these bruh -->
       <v-btn icon v-if="$store.state.isUserLoggedIn" @click="logout">
         <v-icon>mdi-logout</v-icon>
+      </v-btn>
+
+      <v-btn
+      v-if="!$store.state.isUserLoggedIn"
+      class="mr-2 cyan--text"
+      color="white"
+      to="/login"
+      >
+      Login
       </v-btn>
 
   
@@ -92,102 +83,50 @@
         
       </v-row>
 
-        <v-row justify="center" class="pa-10">
+          <v-row justify="center" class="pa-10">
         
         <div class="display-1">
-          Latest News
+          News
         </div>
       </v-row>
-          <v-row justify="center" class="pt-1">
-            
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
+
+      <v-row v-for="item in news_items"
+          :key="item.news_items">
+        <v-card
+          class="mx-auto mb-5"
+          width="1080"
+          outlined
         >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
+          <v-list-item three-line>
+            <v-list-item-content>
+              <div class="text-overline mb-4">
+                {{item.post_date}}
+              </div>
+                  <v-list-item-title class="text-h4 mb-1">
+                    {{item.news_title}}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>{{item.news_content}}</v-list-item-subtitle>
+                </v-list-item-content>
 
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
+                <v-img       
+                    :src="item.image_path"
+                    max-height="200px"
+                    max-width="300px"
+              ></v-img>
+              </v-list-item>
 
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-
-        <v-col>
-          <v-card
-          class="mx-auto"
-          max-width="344"
-        >
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            height="200px"
-          ></v-img>
-
-          <v-card-title>
-            Top western road trips
-          </v-card-title>
-
-          <v-card-subtitle>
-            1,000 miles of wonder
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-btn
-              color="cyan"
-              text
-            >
-              Explore
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        </v-col>
-        
-   
+              <v-card-actions>
+                <v-btn
+                  class="cyan lighten-2 white--text"
+                  outlined
+                  rounded
+                  text
+                  @click="goToNewsPage(item.news_id)"
+                >
+                  Read
+                </v-btn>
+              </v-card-actions>
+         </v-card>
     </v-row>
       </v-container>
     </v-main>
@@ -201,22 +140,20 @@
   </v-footer>
     </v-app>
  
-
-
-    
   </div>
 </template>
 
 <script>
-
+import NewsService from '@/services/NewsService'
  export default {
    data(){
      return{
        dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
-          { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
-          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
+          { title: 'Shop', icon: 'mdi-shopping', path: '/shop' },
+          { title: 'Cart', icon: 'mdi-cart', path: '/cart' },
+          { title: 'Order', icon: 'mdi-bookmark', path: '/custorder' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
           
         ],
@@ -250,8 +187,16 @@
           }
           
         ],
+        news_items:[],
+        
      }
    },
+   async mounted (){
+        const response = (await NewsService.getNews())
+        this.news_items = response.data
+        // console.log(response.data)
+        // this.news_items = response.data
+      },
    //sample method
    methods:{
      logout(){
@@ -260,8 +205,11 @@
         this.$store.dispatch('setUser', null)
         this.$router.push({name: 'Home'})
      },
-     
-     
+     goToNewsPage(newsId){
+      let news_path = '/newsuser/'+newsId
+      this.$router.push({ path: news_path})
+    }
+    
    }
  }
     

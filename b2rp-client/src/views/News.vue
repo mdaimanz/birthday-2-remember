@@ -78,41 +78,41 @@
 
       <v-row v-for="item in news_items"
           :key="item.news_items">
-  <v-card
-    class="mx-auto mb-5"
-    width="1080"
-    outlined
-  >
-    <v-list-item three-line>
-      <v-list-item-content>
-        <div class="text-overline mb-4">
-          {{item.post_date}}
-        </div>
-            <v-list-item-title class="text-h4 mb-1">
-              {{item.news_title}}
-            </v-list-item-title>
-            <v-list-item-subtitle>{{item.news_content}}</v-list-item-subtitle>
-          </v-list-item-content>
+        <v-card
+          class="mx-auto mb-5"
+          width="1080"
+          outlined
+        >
+          <v-list-item three-line>
+            <v-list-item-content>
+              <div class="text-overline mb-4">
+                {{item.post_date}}
+              </div>
+                  <v-list-item-title class="text-h4 mb-1">
+                    {{item.news_title}}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>{{item.news_content}}</v-list-item-subtitle>
+                </v-list-item-content>
 
-          <v-img       
-              :src="item.image_path"
-              max-height="200px"
-              max-width="300px"
-        ></v-img>
-        </v-list-item>
+                <v-img       
+                    :src="item.image_path"
+                    max-height="200px"
+                    max-width="300px"
+              ></v-img>
+              </v-list-item>
 
-        <v-card-actions>
-          <v-btn
-            class="cyan lighten-2 white--text"
-            outlined
-            rounded
-            text
-            @click="goToNewsPage(item.news_id)"
-          >
-            Read
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+              <v-card-actions>
+                <v-btn
+                  class="cyan lighten-2 white--text"
+                  outlined
+                  rounded
+                  text
+                  @click="goToNewsPage(item.news_id)"
+                >
+                  Read
+                </v-btn>
+              </v-card-actions>
+         </v-card>
     </v-row>
 
 

@@ -9,7 +9,7 @@
             Birthday2Remember
           </v-list-item-title>
           <v-list-item-subtitle>
-            Hi user!
+            Hi {{$store.state.user.name}}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -45,26 +45,17 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-badge
-        content="6"
-        color="green"
-        overlap
-      >
-        <v-icon>
-          mdi-bell
-        </v-icon>
-      </v-badge>
-
-      </v-btn>
-      
-
-      <v-btn icon>
-        <v-icon>mdi-account-cog</v-icon>
-      </v-btn>
-
       <v-btn icon v-if="$store.state.isUserLoggedIn" @click="logout">
         <v-icon>mdi-logout</v-icon>
+      </v-btn>
+
+      <v-btn
+      v-if="!$store.state.isUserLoggedIn"
+      class="mr-2 cyan--text"
+      color="white"
+      to="/login"
+      >
+      Login
       </v-btn>
 
   
@@ -263,7 +254,7 @@
 import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
 import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
 import { loadStripe } from "@stripe/stripe-js";
-// import PaymentService from '@/services/PaymentService'
+import PaymentService from '@/services/PaymentService'
 
 setInteractionMode('eager')
 
@@ -324,11 +315,9 @@ setInteractionMode('eager')
        dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
-          { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
-          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
-          { title: 'Sales', icon: 'mdi-sale', path: '/sales' },
-          { title: 'Product', icon: 'mdi-package-variant', path: '/product' },
-          { title: 'Promotion', icon: 'mdi-ticket-percent', path: '/promotion' },
+          { title: 'Shop', icon: 'mdi-shopping', path: '/shop' },
+          { title: 'Cart', icon: 'mdi-cart', path: '/cart' },
+          { title: 'Order', icon: 'mdi-bookmark', path: '/custorder' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
         ],
         stripe: null,
@@ -342,7 +331,8 @@ setInteractionMode('eager')
         city:null,
         state: null,
         zip: null,
-        email: null
+        email: null,
+        details: [],
         
      }
    },
@@ -394,7 +384,8 @@ setInteractionMode('eager')
       const cardElement = this.elements.getElement("card");
 
       try{
-        const response = await fetch("http://localhost:8081/createPaymentIntent/1", {
+        let api = "http://localhost:8081/createPaymentIntent/"+this.$store.state.user.id
+        const response = await fetch(api, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -415,6 +406,25 @@ setInteractionMode('eager')
         });
 
         console.log("error?", error);
+        const response2 = (await PaymentService.addToOrder(this.$store.state.user.id))
+        console.log(response2.data)
+
+        const details ={
+          name: this.name,
+          email: this.email,
+          address: {
+            city: this.city,
+            line1: this.address,
+            state: this.state,
+            postal_code: this.zip
+          }
+        }
+        const response4 = (await PaymentService.savePaymentRecord(this.$store.state.user.id, details))
+        console.log(response4.data)
+
+        const response3 = (await PaymentService.deleteFromCart(this.$store.state.user.id))
+        console.log(response3.data)
+        
         this.$router.push({name: 'PaymentSuccess'})
       }catch(error){
         this.error = "Payment unsuccessful"

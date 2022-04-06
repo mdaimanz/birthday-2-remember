@@ -45,31 +45,62 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-badge
-        content="6"
-        color="green"
-        overlap
-      >
-        <v-icon>
-          mdi-bell
-        </v-icon>
-      </v-badge>
-
-      </v-btn>
-      
-
-      <v-btn icon>
-        <v-icon>mdi-account-cog</v-icon>
-      </v-btn>
-
-      <v-btn icon @click="logout">
+      <v-btn icon v-if="$store.state.isUserLoggedIn" @click="logout">
         <v-icon>mdi-logout</v-icon>
+      </v-btn>
+
+      <v-btn
+      v-if="!$store.state.isUserLoggedIn"
+      class="mr-2 cyan--text"
+      color="white"
+      to="/login"
+      >
+      Login
       </v-btn>
     </v-app-bar>
 
     <v-main>
       <v-container fluid class="mx-auto">
+      
+      <div class="row mb-5" justify="center">
+        <div class="display-1">Recommended</div>
+        <v-card
+    class="mx-auto my-12"
+    max-width="374"
+  >
+    <template slot="progress">
+      <v-progress-linear
+        color="deep-purple"
+        height="10"
+        indeterminate
+      ></v-progress-linear>
+    </template>
+
+    <v-img
+      height="250"
+      :src="recommended[0].image_path"
+    ></v-img>
+
+    <v-card-title>{{recommended[0].product_name}}</v-card-title>
+    <v-card-text>
+    <div class="text-subtitle-1">
+        RM{{recommended[0].product_price}}
+      </div>
+
+      <div>{{recommended[0].product_desc}}</div>
+    </v-card-text>
+    <v-divider class="mx-4"></v-divider>
+    <v-card-actions>
+      <v-btn
+        color="deep-purple lighten-2"
+        text
+        @click="goToProductPage(recommended[0].product_id)"
+      >
+        Buy
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+      </div>
       
       <div class="row">
         <div
@@ -131,6 +162,7 @@
         <div
           class="col-md-9 col-sm-9 col-xs-12"
         >
+        
           <v-row>
             
           </v-row>
@@ -153,6 +185,7 @@
               <v-select class="" @click="printSelect()" v-model="select" :items="options" style="" outlined dense></v-select>
             </v-col>
           </v-row>
+          
 
           <v-divider></v-divider>
 
@@ -198,8 +231,6 @@
           </div> -->
         </div>
       </div>
-    
-      
       </v-container>
     </v-main>
       <v-footer bottom padless app class="mt-10">
@@ -236,16 +267,16 @@ import ShopService from '@/services/ShopService'
         dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
-          { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
-          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
+          { title: 'Shop', icon: 'mdi-shopping', path: '/shop' },
+          { title: 'Cart', icon: 'mdi-cart', path: '/cart' },
+          { title: 'Order', icon: 'mdi-bookmark', path: '/custorder' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
         ],
         product_items: [],
         range: [0, 10000],
-        select:'Recommended',
+        select:'Default',
         options: [
             'Default',
-            'Recommended',
             'Price: Low to High',
             'Price: High to Low',
         ],
@@ -256,6 +287,7 @@ import ShopService from '@/services/ShopService'
         searchQuery: null,
         sortedProduct: [],
         filterKey:'',
+        recommended:[]
         
 
      }
@@ -270,7 +302,9 @@ import ShopService from '@/services/ShopService'
           this.items.push(response2.data[i])
           // console.log(response2.data[i])
         }
-        
+        const response3 = (await ShopService.getUserRecommendation(this.$store.state.user.id))
+        this.recommended = response3.data
+        console.log(response3.data)
         
   },
    computed:{

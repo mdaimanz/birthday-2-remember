@@ -9,7 +9,7 @@
             Birthday2Remember
           </v-list-item-title>
           <v-list-item-subtitle>
-            Hi user!
+            Hi {{$store.state.user.name}}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -44,35 +44,60 @@
       <v-toolbar-title>Shop</v-toolbar-title>
 
       <v-spacer></v-spacer>
-
-      <v-btn icon>
-        <v-badge
-        content="6"
-        color="green"
-        overlap
-      >
-        <v-icon>
-          mdi-bell
-        </v-icon>
-      </v-badge>
-
-      </v-btn>
       
 
-      <v-btn icon>
-        <v-icon>mdi-account-cog</v-icon>
+      <v-btn icon v-if="$store.state.isUserLoggedIn" @click="logout">
+        <v-icon>mdi-logout</v-icon>
       </v-btn>
 
-      <v-btn icon @click="logout">
-        <v-icon>mdi-logout</v-icon>
+      <v-btn
+      v-if="!$store.state.isUserLoggedIn"
+      class="mr-2 cyan--text"
+      color="white"
+      to="/login"
+      >
+      Login
       </v-btn>
     </v-app-bar>
 
     <v-main>
-      <div>
+    <v-row class="mb-6">
+      <v-btn
+      outlined
+      color="primary"
+      @click="redirectToShop"
+    >
+       Back to shop
+    </v-btn>
+    </v-row>  
+    <div>
     <v-container>
+      <v-row justify="left">
+            <v-alert
+            dense
+            text
+            class="ma-5"
+            type="success"
+            v-if="success_msg"
+            >
+            {{success_msg}}
+            </v-alert>
+        </v-row>
+        <v-row justify="center">
+            <!-- error alert -->
+            <v-alert
+            dense
+            outlined
+            class="ma-5"
+            type="error"
+            v-if="error_msg"
+            >
+            {{error_msg}}
+            </v-alert>
+        </v-row>
       <div class="row">
         <div class="col-md-5 col-sm-5 col-xs-12">
+          
           <v-carousel>
             <v-carousel-item
               :src='product.image_path'
@@ -172,26 +197,29 @@ import AuthenticationService from '@/services/AuthenticationService'
     export default {
         data: () => ({
             dashboard_items: [
-                { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
-                { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
-                { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
-                { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
-                { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
-            ],
+          { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
+          { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
+          { title: 'Shop', icon: 'mdi-shopping', path: '/shop' },
+          { title: 'Cart', icon: 'mdi-cart', path: '/cart' },
+          { title: 'Order', icon: 'mdi-bookmark', path: '/custorder' },
+          { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
+        ],
             quantity:1,
             rating:4.5,
             item: 5,
             product:[],
             reviewWithoutName:[],
             review:[],
-            request:{'quantity': '1'}
+            request:{'quantity': '1'},
+            success_msg: '',
+            error_msg: '',
 
      
         }),
         async mounted (){
           const response = (await ShopService.getProduct(this.$route.params.productsId))
           this.product = response.data[0]
-          // console.log(this.product)
+          // console.log(this.product.product_id)
 
           const response2 = (await ShopService.getReview(this.$route.params.productsId))
           this.reviewWithoutName = response2.data
@@ -219,7 +247,10 @@ import AuthenticationService from '@/services/AuthenticationService'
                 // console.log("Quantity: " + this.quantity);
                 // console.log("Product ID: " + this.$route.params.productsId);
                 //later change userID to take current session user ID
-                const response = (await ShopService.addToCart("1",this.$route.params.productsId,this.request))
+                const response = (await ShopService.addToCart(this.$store.state.user.id,this.product.product_id,this.request))
+                if(response){
+                  this.success_msg= response.data.message
+                }
                 console.log(response.data)
             },
             logout(){
@@ -227,6 +258,10 @@ import AuthenticationService from '@/services/AuthenticationService'
                 this.$store.dispatch('setToken', null)
                 this.$store.dispatch('setUser', null)
                 this.$router.push({name: 'Home'})
+            },
+
+            redirectToShop(){
+              this.$router.push({name: 'Shop'})
             },
         },
     }

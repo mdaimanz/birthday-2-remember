@@ -9,6 +9,7 @@
             Birthday2Remember
           </v-list-item-title>
           <v-list-item-subtitle>
+            Hi {{$store.state.user.name}}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -44,33 +45,27 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-badge
-        content="6"
-        color="green"
-        overlap
-      >
-        <v-icon>
-          mdi-bell
-        </v-icon>
-      </v-badge>
-
-      </v-btn>
-      
-      <v-btn icon>
-        <v-icon>mdi-account-cog</v-icon>
-      </v-btn>
-
-      <v-btn icon @click="logout">
+      <v-btn icon v-if="$store.state.isUserLoggedIn" @click="logout">
         <v-icon>mdi-logout</v-icon>
+      </v-btn>
+
+      <v-btn
+      v-if="!$store.state.isUserLoggedIn"
+      class="mr-2 cyan--text"
+      color="white"
+      to="/login"
+      >
+      Login
       </v-btn>
 
       
     </v-app-bar>
 
     <v-main>
+      
       <v-row class="pa-2">
         <v-col :cols="12" md="7" sm="12" style="box-shadow: 5px 5px 10px #d9d9d9">
+          
           <v-simple-table light>
             <template v-slot:default>
               <thead>
@@ -123,6 +118,25 @@
         <v-col :cols="12" md="1" sm="12">
         </v-col>
         <v-col :cols="12" md="3" sm="12" style="max-length: 30px; border-left: 2px">
+          <v-alert
+      dense
+      outlined
+      class="ma-5"
+      type="error"
+      v-if="error_msg"
+    >
+    {{error_msg}}
+    </v-alert>
+
+    <v-alert
+      dense
+      text
+      class="ma-5"
+      type="success"
+      v-if="success_msg"
+    >
+      {{success_msg}}
+    </v-alert>
           <p class="headline text-center">Order Summary</p>
           
           <v-simple-table>
@@ -147,8 +161,19 @@
               </tbody>
             </template>
           </v-simple-table>
+
+          <v-text-field
+            v-model="code.code"
+            label="Promotion code"
+            
+            solo
+          ></v-text-field>
           <div class="text-center">
-            <v-btn class="primary white--text mt-5" @click="makePayment" outlined>PROCEED TO PAY</v-btn>
+            <v-btn class="orange white--text mt-5" v-if="code" @click="applyPromotionCode" outlined>Apply promo code</v-btn>
+          </div>
+
+          <div class="text-center">
+            <v-btn class="primary white--text mt-5" v-if="cart_items" @click="makePayment" outlined>PROCEED TO PAY</v-btn>
           </div>
         </v-col>
       </v-row>
@@ -172,6 +197,7 @@
 
 <script>
 import ShopService from '@/services/ShopService'
+import PaymentService from '@/services/PaymentService'
 
 export default {
    data(){
@@ -183,14 +209,13 @@ export default {
        dashboard_items: [
           { title: 'Home', icon: 'mdi-home' , path: '/userdashboard' },
           { title: 'Reminder', icon: 'mdi-calendar-month', path: '/reminder' },
-          { title: 'Shopping', icon: 'mdi-shopping', path: '/shop' },
-          { title: 'News and Promotion', icon: 'mdi-newspaper', path: '/newsandpromo' },
-          { title: 'Sales', icon: 'mdi-sale', path: '/sales' },
-          { title: 'Product', icon: 'mdi-package-variant', path: '/product' },
-          { title: 'Promotion', icon: 'mdi-ticket-percent', path: '/promotion' },
+          { title: 'Shop', icon: 'mdi-shopping', path: '/shop' },
+          { title: 'Cart', icon: 'mdi-cart', path: '/cart' },
+          { title: 'Order', icon: 'mdi-bookmark', path: '/custorder' },
           { title: 'Setting', icon: 'mdi-account-cog', path: '/usersetting' },
         ],
-        
+        rate:1,
+        code:{code: ''},
         editedIndex: -1,
         editedItem: {
             title: '',
@@ -206,7 +231,7 @@ export default {
      }
    },
    async mounted (){
-        const response = (await ShopService.getUserCart("1"))
+        const response = (await ShopService.getUserCart(this.$store.state.user.id))
            this.cart_items = response.data
           //  console.log(this.cart_items)
     },
@@ -222,7 +247,7 @@ export default {
         Object.entries(this.cart_items).forEach((key) => {
             // console.log(key[1])
             // console.log(key[1].price)
-            total.push(parseFloat(key[1].product_price)*key[1].quantity) // the value of the current key.
+            total.push(parseFloat(key[1].product_price)*key[1].quantity*this.rate) // the value of the current key.
         });
 
         return total.reduce(function(total, num){ return total + num }, 0);
@@ -242,6 +267,10 @@ export default {
     },
 
    methods:{
+     clear(){
+       this.success_msg=''
+       this.error_msg=''
+     },
        
        makePayment(){
          this.$router.push({name: 'Checkout'})
@@ -251,7 +280,7 @@ export default {
       },
        
        async initialize (){
-           const response = (await ShopService.getUserCart("1"))
+           const response = (await ShopService.getUserCart(this.$store.state.user.id))
            this.cart_items = response.data
        },
       
@@ -260,9 +289,9 @@ export default {
         // console.log(this.editedIndex)
         
         let productid = this.cart_items[this.editedIndex].product_id
-        let user_id = "1"
+        
         try{
-          const response = (await ShopService.deleteCartItem(user_id,productid))
+          const response = (await ShopService.deleteCartItem(this.$store.state.user.id,productid))
           // console.log(response.data)
           if(response.status==200){
             this.success_msg =response.data.message
@@ -277,10 +306,26 @@ export default {
       async editProductQuantity(item){
         this.editedIndex = this.cart_items.indexOf(item)
         let productid = this.cart_items[this.editedIndex].product_id
-        let user_id = "1"
-        const response = (await ShopService.editProductQuantity(user_id, productid, item))
+        
+        const response = (await ShopService.editProductQuantity(this.$store.state.user.id, productid, item))
         console.log(response.data)
         this.initialize()
+      },
+
+      async applyPromotionCode(){
+        this.clear()
+        try{
+          console.log(this.code)
+          const response = (await PaymentService.applyPromotionCode(this.$store.state.user.id, this.code))
+          console.log(response)
+          if(response.status==200){
+            this.success_msg =response.data.message
+          }
+          this.initialize()
+        }catch(error){
+          // console.log(error.response.data.error)
+          this.error_msg = error.response.data.error
+        }
       },
 
       testClick(item){
